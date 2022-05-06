@@ -9,6 +9,7 @@ import SignUp from '@/pages/SignUp';
 import Request from '@/pages/Request';
 import Donation from '@/pages/Donation';
 import Appointment from '@/pages/Appointment';
+import Organization from '../pages/Organizations';
 
 const routes = () => {
   return (
@@ -21,6 +22,7 @@ const routes = () => {
       <Route path="/requests" exact element={<Request />} />
       <Route path="/donations" exact element={<Donation />} />
       <Route path="/appointments" exact element={<Appointment />} />
+      <Route path="/organizations" exact element={<Organization />} />
     </Routes>
   )
 }
