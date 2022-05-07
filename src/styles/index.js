@@ -22,7 +22,8 @@ const custom = {
     right: 0,
     borderTop: '1px solid #ced4da',
     width: '100%',
-    bottom: 0
+    bottom: 0,
+    backgroundColor: '#fff'
   }
 }
 

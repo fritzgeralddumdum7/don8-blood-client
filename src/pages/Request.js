@@ -1,11 +1,11 @@
 import Wrapper from '@/components/Wrapper';
 
-const Dashboard = () => {
+const Request = () => {
   return (
     <Wrapper>
-      Dashboard
+      Request
     </Wrapper>
   );
 }
 
-export default Dashboard;
+export default Request;

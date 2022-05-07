@@ -6,6 +6,9 @@ import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import ResetPassword from '@/pages/ResetPassword';
 import SignUp from '@/pages/SignUp';
+import Request from '@/pages/Request';
+import Donation from '@/pages/Donation';
+import Appointment from '@/pages/Appointment';
 
 const routes = () => {
   return (
@@ -15,6 +18,9 @@ const routes = () => {
       <Route path="/login" exact element={<Login />} />
       <Route path="/reset-password" exact element={<ResetPassword />} />
       <Route path="/sign-up" exact element={<SignUp />} />
+      <Route path="/requests" exact element={<Request />} />
+      <Route path="/donations" exact element={<Donation />} />
+      <Route path="/appointments" exact element={<Appointment />} />
     </Routes>
   )
 }
