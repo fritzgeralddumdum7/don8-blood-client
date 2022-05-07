@@ -1,11 +1,11 @@
 import Wrapper from '@/components/Wrapper';
 
-const Dashboard = () => {
+const Donation = () => {
   return (
     <Wrapper>
-      Dashboard
+      Donation
     </Wrapper>
   );
 }
 
-export default Dashboard;
+export default Donation;
