@@ -16,6 +16,13 @@ const button = {
 const custom = {
   graySection: {
     backgroundColor: '#F4F6FB'
+  },
+  stepFooter: {
+    position: 'absolute',
+    right: 0,
+    borderTop: '1px solid #ced4da',
+    width: '100%',
+    bottom: 0
   }
 }
 
