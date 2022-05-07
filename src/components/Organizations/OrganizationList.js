@@ -8,21 +8,20 @@ const OrganizationList = () =>{
   useEffect(() => {
     const getOrganizations = () => {
       Organizations.getOrganizations().then((response) => {
-        console.log(response.data)
-        setElements(response.data);
+        setElements(response.data.data);
       }).catch(err => console.log(err));      
     };
 
     getOrganizations();
   }, []);
 
-  
-
   const rows = elements.map((element) => (
-    <tr key={element.id}>
-        <td>{element.name}</td>
-        <td>{element.created_at}</td>
-        <td>{element.symbol}</td>
+    <tr key={element.attributes.id}>
+        <td>{element.attributes.organization_name}</td>
+        <td>{element.attributes.organization_type_name}</td>
+        <td>{element.attributes.city_municipality_name}</td>
+        <td>{element.attributes.latitude}</td>
+        <td>{element.attributes.longitude}</td>
         <td>{element.mass}</td>
       </tr>    
   ));
