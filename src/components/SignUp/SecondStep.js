@@ -38,15 +38,6 @@ const SecondStep = () => {
               required
             />
             <Select
-              label="City / Municipality"
-              placeholder="Select a municipality"
-              size='lg'
-              data={[
-                { value: '1', label: 'Donor' },
-                { value: '2', label: 'Organization' },
-              ]}
-            />
-            <Select
               label="Province"
               placeholder="Select a province"
               size='lg'
@@ -54,6 +45,17 @@ const SecondStep = () => {
                 { value: '1', label: 'Donor' },
                 { value: '2', label: 'Organization' },
               ]}
+              searchable
+            />
+            <Select
+              label="City / Municipality"
+              placeholder="Select a municipality"
+              size='lg'
+              data={[
+                { value: '1', label: 'Donor' },
+                { value: '2', label: 'Organization' },
+              ]}
+              searchable
             />
           </SimpleGrid>
           <TextInput
