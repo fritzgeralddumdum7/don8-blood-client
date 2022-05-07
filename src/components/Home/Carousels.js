@@ -1,6 +1,6 @@
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import CarouselItem from '../../../components/molecules/Home/CarouselItem';
+import CarouselItem from '../../components/Home/CarouselItem';
 
 const Carousels = ({ carousels }) => {
   return (
