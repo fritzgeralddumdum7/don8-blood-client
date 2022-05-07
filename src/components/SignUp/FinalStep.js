@@ -19,6 +19,7 @@ const FinalStep = ({ role, setRole }) => {
             { value: '1', label: 'Donor' },
             { value: '2', label: 'Organization' },
           ]}
+          searchable
         />
       );
     } else if (role === '2') {
@@ -45,6 +46,7 @@ const FinalStep = ({ role, setRole }) => {
               { value: '1', label: 'Donor' },
               { value: '2', label: 'Organization' },
             ]}
+            searchable
           />
           {renderRoleFields()}
         </Stack>

@@ -33,7 +33,7 @@ const SignUp = () => {
 
   return (
     <Box>
-      <Container size='md' py={100}>
+      <Container size='md' pt={100} pb={150}>
         <Stepper active={active} onStepClick={setActive} breakpoint="sm">
           <Stepper.Step label="First step" description="Create account">
             <FirstStep />
