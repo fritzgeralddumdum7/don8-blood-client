@@ -1,16 +1,16 @@
 import { BrowserRouter as Router } from 'react-router-dom';
-import { MantineProvider } from '@mantine/core';
+import Main from './components/Main';
 import './styles/global.css';
 
 import Routes from './routes';
 
 const App = () => {
   return (
-    <MantineProvider>
+    <Main>
       <Router>
         <Routes />
       </Router>
-    </MantineProvider>
+    </Main>
   );
 }
 

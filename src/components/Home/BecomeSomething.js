@@ -1,5 +1,5 @@
 import { Box, Button, Container, Stack, Title, Center, Text, Image, SimpleGrid } from '@mantine/core';
-import { button, custom } from '../../../styles';
+import { button, custom } from '../../styles';
 
 const BecomeSomething = () => {
   return (

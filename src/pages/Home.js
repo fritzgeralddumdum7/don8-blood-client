@@ -1,6 +1,6 @@
 import { Box } from "@mantine/core";
-import BecomeSomething from "../components/organisms/Home/BecomeSomething";
-import Carousels from "../components/organisms/Home/Carousels";
+import BecomeSomething from "../components/Home/BecomeSomething";
+import Carousels from "../components/Home/Carousels";
 
 const Home = () => {
   const data = {
