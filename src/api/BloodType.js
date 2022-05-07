@@ -1,7 +1,7 @@
 import API from './base';
 
-const Test = {
-    getTest: async () => {
+const BloodType = {
+    getBloodTypes: async () => {
         const options = {
             method: 'GET',
             url: '/test'
@@ -11,4 +11,4 @@ const Test = {
     }
 }
 
-export default Test;
+export default BloodType;

@@ -1,5 +1,5 @@
 import { Box } from "@mantine/core";
-import OrganizationList from "../components/organisms/Organizations/OrganizationList";
+import OrganizationList from "../components/Organizations/OrganizationList";
 
 const Organizations = () => {
   return (

@@ -1,14 +1,14 @@
 import API from './base';
 
-const Test = {
-    getTest: async () => {
+const Organization = {
+    getOrganizations: async () => {
         const options = {
             method: 'GET',
-            url: '/test'
+            url: '/organizations'
         }
 
         return await API.request(options);
     }
 }
 
-export default Test;
+export default Organization;
