@@ -25,29 +25,32 @@ const Login = () => {
   return (
     <Container size='xs'>
       <form onSubmit={form.onSubmit((values) => console.log(values))}>
-      <Stack spacing={30} pt={150}>
-        <TextInput
-          id="input-demo"
-          size='lg'
-          label="Email Address"
-          placeholder='Email Address'
-          {...form.getInputProps('email')}
-        />
-        <PasswordInput
-          size='lg'
-          placeholder="Password"
-          {...form.getInputProps('password')}
-          label="Password"
-        />
-        <Group position='apart'>
-          <Anchor href="/reset-password" size='lg'>
-            Forgot your password?
-          </Anchor>
+        <Stack spacing={30} pt={150}>
+          <TextInput
+            id="input-demo"
+            size='lg'
+            label="Email Address"
+            placeholder='Email Address'
+            {...form.getInputProps('email')}
+          />
+          <PasswordInput
+            size='lg'
+            placeholder="Password"
+            {...form.getInputProps('password')}
+            label="Password"
+          />
+          <Group position='apart'>
+            <Anchor href="/reset-password" size='lg'>
+              Forgot your password?
+            </Anchor>
+            <Anchor href="/sign-up" size='lg'>
+              Create account
+            </Anchor>
+          </Group>
           <Button size='lg' px={50} type='submit'>
             Login
           </Button>
-        </Group>
-      </Stack>
+        </Stack>
       </form>
     </Container>
   );
