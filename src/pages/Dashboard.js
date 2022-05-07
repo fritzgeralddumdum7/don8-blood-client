@@ -1,6 +1,6 @@
 import logo from '../logo.svg';
 import { Button } from '@mantine/core';
-import { Test } from '../services';
+import { Test } from '@/services';
 
 const Dashboard = () => {
   return (
