@@ -1,5 +1,5 @@
 import { Table } from '@mantine/core';
-import Organizations from '../../api/Organization'
+import Organizations from '@/api/Organization'
 import { useState, useEffect } from 'react';
 
 const OrganizationList = () =>{
