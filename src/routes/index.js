@@ -9,7 +9,7 @@ import SignUp from '@/pages/SignUp';
 import Request from '@/pages/Request';
 import Donation from '@/pages/Donation';
 import Appointment from '@/pages/Appointment';
-import Organization from '../pages/Organizations';
+import Organization from '@/pages/Organizations';
 
 const routes = () => {
   return (

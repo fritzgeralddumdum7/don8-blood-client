@@ -24,7 +24,7 @@ const theme = {
 
 const Main = ({ children, meta }) => {
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider>
       <Box>
         {meta}
         <Box>{children}</Box>

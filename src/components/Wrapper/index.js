@@ -12,7 +12,8 @@ import {
   Group,
   Avatar,
   Menu,
-  Box
+  Box,
+  ThemeIcon
 } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
 import { NAV_ITEMS } from '@/constant';
@@ -37,7 +38,9 @@ const Wrapper = ({ children }) => {
         })}>
           <Navbar.Section>
             <Group>
-              <Component size={35} strokeWidth={1.5} />
+              <ThemeIcon variant='outline' size='lg'>
+                <Component size={20} />
+              </ThemeIcon>
               <Text>{text}</Text>
             </Group>
           </Navbar.Section>
