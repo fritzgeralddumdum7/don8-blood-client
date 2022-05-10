@@ -1,4 +1,4 @@
-import API from './base'
+import API from './base';
 
 const Test = {
     getTest: async () => {
@@ -7,7 +7,7 @@ const Test = {
             url: '/test'
         }
 
-        return await API.request(options)
+        return await API.request(options);
     }
 }
 
