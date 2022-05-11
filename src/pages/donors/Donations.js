@@ -1,6 +1,6 @@
 import Wrapper from '@/components/Wrapper';
 
-const Donation = () => {
+const Donations = () => {
   return (
     <Wrapper>
       Donation
@@ -8,4 +8,4 @@ const Donation = () => {
   );
 }
 
-export default Donation;
+export default Donations;

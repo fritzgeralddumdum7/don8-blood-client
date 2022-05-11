@@ -12,7 +12,7 @@ const elements = [
   { position: 58, mass: 140.12, symbol: 'Ce', name: 'Cerium' },
 ];
 
-const Request = () => {
+const Requests = () => {
   const [opened, setOpened] = useState(false);
 
   const rows = elements.map((element) => (
@@ -71,4 +71,4 @@ const Request = () => {
   );
 }
 
-export default Request;
+export default Requests;

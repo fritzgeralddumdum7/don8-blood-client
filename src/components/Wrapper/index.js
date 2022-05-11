@@ -17,16 +17,27 @@ import {
 } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
 import { NAV_ITEMS } from '@/constant';
-import { Pencil, Power } from 'tabler-icons-react';
+import { Pencil, Power, Users } from 'tabler-icons-react';
 
 const Wrapper = ({ children }) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const date = new Date();
   const location = useLocation();
+  const role = 2;
 
   const renderNavItems = () => {
-    return NAV_ITEMS.map(({ Component, text, href }, i) => {
+    let items = NAV_ITEMS;
+    
+    if (role === 2) {
+      items = [...NAV_ITEMS, {
+        text: 'Patients',
+        Component: Users,
+        href: '/patients'
+      }]
+    }
+
+    return items.map(({ Component, text, href }, i) => {
       return (
         <Anchor key={i} p={13} underline={false} href={href} styles={() => ({
           root: {
