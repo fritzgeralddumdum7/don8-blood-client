@@ -33,14 +33,14 @@ const rows = elements.map((element) => (
   </tr>
 ));
 
-const Appointment = () => {
+const Appointments = () => {
   return (
     <Wrapper>
       <Card shadow="sm" mt='sm'>
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Organization</th>
+              <th>Donor</th>
               <th>Blood Type</th>
               <th>Blood Request Type</th>
               <th>Category</th>
@@ -56,4 +56,4 @@ const Appointment = () => {
   );
 }
 
-export default Appointment;
+export default Appointments;
