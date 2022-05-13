@@ -15,7 +15,7 @@ const OrganizationList = () =>{
     getOrganizations();
   }, []);
 
-  const rows = elements.map((element) => (
+  const rows = elements.map(element => (
     <tr key={element.attributes.id}>
       <td>{element.attributes.organization_name}</td>
       <td>{element.attributes.organization_type_name}</td>
