@@ -14,9 +14,11 @@ import {
   ListItem
 } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
+import { useForm } from '@mantine/form';
 import { Pencil, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
 import { BloodType, Case, Organization, BloodRequest, RequestType } from '@/services';
+import moment from 'moment';
 
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -25,16 +27,28 @@ const Requests = () => {
   const [errors, setErrors] = useState({});
   //for dropdowns items
   const [cases, setCases] = useState([]); 
-  const [organizations, setOrganizations] = useState([]); 
   const [requestTypes, setRequestTypes] = useState([]); 
   const [bloodTypes, setBloodTypes] = useState([]); 
-  //for dropdown values
-  const [valueCase, setValueCase] = useState('');
-  const [valueOrganization, setValueOrganization] = useState('');
-  const [valueRequestType, setValueRequestType] = useState('');
-  const [valueBloodType, setValueBloodType] = useState('');
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
+
+  const form = useForm({
+    initialValues: {
+      date_time: new Date(),
+      user_id: 3,
+      case_id: '',
+      organization_id: 5,
+      request_type_id: '',
+      blood_type_id: ''      
+    },
+
+    validate: {
+      date_time: (value) => value ? null : 'No schedule',
+      case_id: (value) => value ? null : 'No selected case',
+      request_type_id: (value) => value ? null : 'No selected request type',
+      blood_type_id: (value) => value ? null : 'No selected blood type',
+    },
+  });
 
   useEffect(() => {
     const getBloodRequests = () => {
@@ -67,16 +81,6 @@ const Requests = () => {
   }, []);
 
   useEffect(() => {
-    const getOrganizations = () => {
-      Organization.getOrganizations().then((response) => {
-        setOrganizations(response.data.data);    
-      }).catch(err => console.log(err));
-    };
-
-    getOrganizations();
-  }, []);
-
-  useEffect(() => {
     const getRequestTypes = () => {
       RequestType.getRequestTypes().then((response) => {
         setRequestTypes(response.data.data);    
@@ -86,20 +90,11 @@ const Requests = () => {
     getRequestTypes();
   }, []);
 
-  const createBloodRequest = () => {
-    const payload = {
-      "date_time": "2022-05-10 08:00",
-      "user_id": 6,
-      "case_id": valueCase,
-      "organization_id": valueOrganization,
-      "request_type_id": valueRequestType,
-      "blood_type_id": valueBloodType
-    };
-
+  const createBloodRequest = (payload) => {
     BloodRequest.create(payload).then((response) => {
-      setErrors(response.data.errors);      
-    }).catch(err => console.log(err));
-    setIsDrawerOpened(false);
+      setErrors(response.data.errors);
+      setIsDrawerOpened(false);      
+    }).catch(err => console.log(err));    
   }
 
   const rows = bloodRequests.map((element) => (
@@ -109,7 +104,7 @@ const Requests = () => {
       <td>{element.attributes.blood_type_name}</td>
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
-      <td>{element.attributes.date_time}</td>
+      <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>
         <Badge color='red' variant="filled">Pending</Badge>
       </td>
@@ -139,70 +134,65 @@ const Requests = () => {
           title: { fontWeight: 'bold' }
         })}
       >
-        <Stack>
-          <DatePicker placeholder="Pick date" label="Event date" required />
-          <TimeInput label="Pick time" format="12" defaultValue={new Date()} />
-          <Select
-              label="Patient Name"
+        <form onSubmit={form.onSubmit((values) => createBloodRequest(values))}>
+          <Stack>
+            <DatePicker 
+              placeholder="Select date" 
+              label="Event date" 
+              required 
+              {...form.getInputProps('date_time')}
+            />
+            <TimeInput 
+              label="Pick time" 
+              format="12" 
+              {...form.getInputProps('date_time')}
+            />
+            <Select
+                label="Patient Name"
+                placeholder="Select here"
+                data = {[{ value: '3', label: 'Erma Win' },
+                { value: '6', label: 'Vinna Vinz' },]}
+                searchable
+              />
+            <Select
+              label="Blood Type"
               placeholder="Select here"
-              data = {[{ value: '3', label: 'Erma Win' },
-              { value: '6', label: 'Vinna Vinz' },]}
+              {...form.getInputProps('blood_type_id')}
+              data = {bloodTypes.map(element => {
+                let item = {};
+                item["value"] = element.id;
+                item["label"] = element.attributes.name;
+                return item;
+              })}
               searchable
             />
-          <Select
-            label="Blood Type"
-            placeholder="Select here"
-            value = {valueBloodType}
-            onChange = {setValueBloodType}
-            data = {bloodTypes.map(element => {
-              let item = {};
-              item["value"] = element.id;
-              item["label"] = element.attributes.name;
-              return item;
-            })}
-            searchable
-          />
-          <Select
-            label="Request Type"
-            placeholder="Select here"
-            value = {valueRequestType}
-            onChange = {setValueRequestType}
-            data = {requestTypes.map(element => {
-              let item = {};
-              item["value"] = element.id;
-              item["label"] = element.attributes.name;
-              return item;
-            })}
-            searchable
-          />
-          <Select
-            label="Case Type"
-            placeholder="Select here"
-            value = {valueCase}
-            onChange = {setValueCase}
-            data={cases.map(element => {
-              let item = {};
-              item["value"] = element.id;
-              item["label"] = element.attributes.name;
-              return item;
-            })}
-            searchable
-          />
-          <Select
-            label="Organization"
-            placeholder="Select here"
-            value = {valueOrganization}
-            onChange = {setValueOrganization}
-            data={organizations.map(element => {
-              let item = {};
-              item["value"] = element.id;
-              item["label"] = element.attributes.name;
-              return item;
-            })}
-            searchable
-          />
-          <Button onClick={createBloodRequest}>Save</Button>
-        </Stack>
+            <Select
+              label="Request Type"
+              placeholder="Select here"
+              {...form.getInputProps('request_type_id')}
+              data = {requestTypes.map(element => {
+                let item = {};
+                item["value"] = element.id;
+                item["label"] = element.attributes.name;
+                return item;
+              })}
+              searchable
+            />
+            <Select
+              label="Case Type"
+              placeholder="Select here"
+              {...form.getInputProps('case_id')}
+              data={cases.map(element => {
+                let item = {};
+                item["value"] = element.id;
+                item["label"] = element.attributes.name;
+                return item;
+              })}
+              searchable
+            />
+            <Button type='submit'>Save</Button>
+          </Stack>
+        </form>        
       </Drawer>
       <AlertDialog
         isToggled={isDialogOpened}
@@ -217,7 +207,7 @@ const Requests = () => {
               <th>Tran. Code</th>
               <th>Patient</th>
               <th>Blood Type</th>
-              <th>Blood Request Type</th>
+              <th>Request Type</th>
               <th>Case</th>
               <th>Schedule</th>
               <th>Status</th>
