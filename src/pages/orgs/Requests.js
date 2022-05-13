@@ -16,16 +16,13 @@ import {
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { Pencil, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
-import BloodType from '@/api/BloodType';
-import Case from '@/api/Case';
-import Organization from '@/api/Organization';
-import BloodRequest from '@/api/BloodRequest';
-import RequestType from '@/api/RequestType';
+import { BloodType, Case, Organization, BloodRequest, RequestType } from '@/services';
 
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [errors, setErrors] = useState({});
   //for dropdowns items
   const [cases, setCases] = useState([]); 
   const [organizations, setOrganizations] = useState([]); 
@@ -100,7 +97,7 @@ const Requests = () => {
     };
 
     BloodRequest.create(payload).then((response) => {
-      console.log(response.data.data);
+      setErrors(response.data.errors);      
     }).catch(err => console.log(err));
     setIsDrawerOpened(false);
   }
