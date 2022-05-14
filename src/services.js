@@ -6,5 +6,16 @@ import RequestType from '@/api/RequestType';
 import Appointment from '@/api/Appointment';
 import CityMunicipality from '@/api/CityMunicipality';
 import OrganizationType from '@/api/OrganizationType';
+import User from '@/api/User';
 
-export { BloodType, Case, Organization, BloodRequest, RequestType, Appointment, CityMunicipality, OrganizationType };
+export {
+    BloodType,
+    Case,
+    Organization,
+    BloodRequest,
+    RequestType,
+    Appointment,
+    CityMunicipality,
+    OrganizationType,  
+    User
+};
