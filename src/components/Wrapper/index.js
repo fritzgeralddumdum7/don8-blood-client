@@ -16,8 +16,11 @@ import {
   ThemeIcon
 } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
-import { NAV_ITEMS } from '@/constant';
-import { Pencil, Power, Users } from 'tabler-icons-react';
+import { DONOR_NAV_ITEMS, ORGS_NAV_ITEMS, ADMIN_NAV_ITEMS } from '@/constant';
+import { Pencil, Power } from 'tabler-icons-react';
+import { useAuth } from '@/contexts/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const Wrapper = ({ children }) => {
   const theme = useMantineTheme();
@@ -25,16 +28,19 @@ const Wrapper = ({ children }) => {
   const date = new Date();
   const location = useLocation();
   const role = 2;
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   const renderNavItems = () => {
-    let items = NAV_ITEMS;
-    
-    if (role === 2) {
-      items = [...NAV_ITEMS, {
-        text: 'Patients',
-        Component: Users,
-        href: '/patients'
-      }]
+    let items = [];
+    const cookie = JSON.parse(Cookies.get('don8_blood'));
+
+    if (cookie.user.role === 1) {
+      items = DONOR_NAV_ITEMS;
+    } else if (cookie.user.role === 2) {
+      items = ORGS_NAV_ITEMS;
+    } else {
+      items = ADMIN_NAV_ITEMS;
     }
 
     return items.map(({ Component, text, href }, i) => {
@@ -58,6 +64,11 @@ const Wrapper = ({ children }) => {
         </Anchor>
       );
     });
+  }
+
+  const handleLogout = () => {
+    auth.logout();
+    navigate('/login', { replace: true });
   }
 
   return (
@@ -109,7 +120,7 @@ const Wrapper = ({ children }) => {
               <Menu.Item icon={<Pencil size={20} />}>
                 Edit Profile
               </Menu.Item>
-              <Menu.Item icon={<Power size={20} />}>
+              <Menu.Item icon={<Power size={20} />} onClick={handleLogout}>
                 Logout
               </Menu.Item>
             </Menu>
