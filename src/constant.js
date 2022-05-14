@@ -25,5 +25,10 @@ export const NAV_ITEMS = [
     text: 'Appointments',
     Component: Notes,
     href: '/appointments'
+  },
+  {
+    text: 'Organizations',
+    Component: Notes,
+    href: '/organizations'
   }
 ]
