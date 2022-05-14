@@ -47,7 +47,7 @@ const Appointments = () => {
       <td>{element.attributes.blood_type_name}</td>
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
-      <td>{element.attributes.date_time}</td>
+      <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>
         <Badge color='red' variant="filled">Pending</Badge>
       </td>

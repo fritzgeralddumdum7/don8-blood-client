@@ -17,7 +17,7 @@ import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Pencil, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
-import { BloodType, Case, Organization, BloodRequest, RequestType } from '@/services';
+import { BloodType, Case, BloodRequest, RequestType } from '@/services';
 import moment from 'moment';
 
 const Requests = () => {
@@ -31,7 +31,7 @@ const Requests = () => {
   const [bloodTypes, setBloodTypes] = useState([]); 
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
-
+  
   const form = useForm({
     initialValues: {
       date_time: new Date(),
@@ -50,6 +50,7 @@ const Requests = () => {
     },
   });
 
+  //table items
   useEffect(() => {
     const getBloodRequests = () => {
       BloodRequest.getBloodRequests().then((response) => {
@@ -60,6 +61,21 @@ const Requests = () => {
     getBloodRequests();
   }, []);
 
+  //for edit on modal   
+  const getSpecificBloodRequest = (id) => {
+    BloodRequest.getSpecificBloodRequest(id).then((response) => {
+      form.setValues({date_time: new Date(response.data.data[0].attributes.date_time),
+                      user_id: response.data.data[0].attributes.user_id.toString(),
+                      blood_type_id: response.data.data[0].attributes.blood_type_id.toString(),
+                      request_type_id: response.data.data[0].attributes.request_type_id.toString(),
+                      case_id: response.data.data[0].attributes.case_id.toString()});   
+                         
+      setErrors(response.data.errors);      
+      console.log(form.values);
+    }).catch(err => console.log(err));    
+  }    
+
+  //dropdown items
   useEffect(() => {
     const getBloodTypes = () => {
       BloodType.getBloodTypes().then((response) => {
@@ -70,6 +86,7 @@ const Requests = () => {
     getBloodTypes();
   }, []);
 
+  //dropdown items
   useEffect(() => {
     const getCases = () => {
       Case.getCases().then((response) => {
@@ -80,6 +97,7 @@ const Requests = () => {
     getCases();
   }, []);
 
+  //dropdown items
   useEffect(() => {
     const getRequestTypes = () => {
       RequestType.getRequestTypes().then((response) => {
@@ -110,6 +128,7 @@ const Requests = () => {
       </td>
       <td>
         <Button leftIcon={<Pencil />} onClick={() => {
+          getSpecificBloodRequest(element.id);
           setIsDrawerOpened(true);
           setIsEdit(true);
         }}>
@@ -150,8 +169,11 @@ const Requests = () => {
             <Select
                 label="Patient Name"
                 placeholder="Select here"
+                {...form.getInputProps('user_id')}
                 data = {[{ value: '3', label: 'Erma Win' },
-                { value: '6', label: 'Vinna Vinz' },]}
+                { value: '6', label: 'Vinna Vinz' },
+                { value: '9', label: 'Prets' },
+              ]}
                 searchable
               />
             <Select
