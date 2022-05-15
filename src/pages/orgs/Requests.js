@@ -51,13 +51,13 @@ const Requests = () => {
   });
 
   //table items
-  useEffect(() => {
-    const getBloodRequests = () => {
-      BloodRequest.getBloodRequests().then((response) => {
-        setBloodRequests(response.data.data);    
-      }).catch(err => console.log(err));
-    };
+  const getBloodRequests = () => {
+    BloodRequest.getBloodRequests().then((response) => {
+      setBloodRequests(response.data.data);    
+    }).catch(err => console.log(err));
+  };
 
+  useEffect(() => {
     getBloodRequests();
   }, []);
 
@@ -109,7 +109,8 @@ const Requests = () => {
   }, []);
 
   const createBloodRequest = (payload) => {
-    BloodRequest.create(payload).then((response) => {
+    BloodRequest.create({...payload, user_id: 11}).then((response) => {
+      getBloodRequests();
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
     }).catch(err => console.log(err));    

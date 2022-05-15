@@ -8,6 +8,14 @@ const Organization = {
 			data
 		}
 		return await API.request(options);
+	},
+	login: async (data) => {
+		const options = {
+			method: 'POST',
+			url: '/login',
+			data
+		}
+		return await API.request(options);
 	}
 }
 
