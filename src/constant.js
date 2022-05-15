@@ -26,6 +26,11 @@ export const DONOR_NAV_ITEMS = [
     text: 'Appointments',
     Component: Notes,
     href: '/appointments'
+  },
+  {
+    text: 'Organizations',
+    Component: Notes,
+    href: '/organizations'
   }
 ]
 

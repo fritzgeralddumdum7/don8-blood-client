@@ -7,6 +7,15 @@ const Organization = {
 			url: '/organizations'
 		}
 		return await API.request(options);
+	},
+	create: async (payload) => {
+		const options = {
+			method: 'POST',
+			url: '/organizations',
+			data: payload
+		};
+
+		return await API.request(options);
 	}
 }
 
