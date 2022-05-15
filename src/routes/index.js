@@ -18,7 +18,7 @@ import OrgsOrganizations from '@/pages/orgs/Organizations';
 import OrgsPatients from '@/pages/orgs/Patients';
 
 const routes = () => {
-  const role = 2;
+  const role = 1; //1-donor, 2-org
 
   return (
     <Routes>

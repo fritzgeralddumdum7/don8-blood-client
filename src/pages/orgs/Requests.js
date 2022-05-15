@@ -35,9 +35,9 @@ const Requests = () => {
   const form = useForm({
     initialValues: {
       date_time: new Date(),
-      user_id: 3,
+      user_id: '', 
       case_id: '',
-      organization_id: 5,
+      organization_id: 5, //change this with user's org id
       request_type_id: '',
       blood_type_id: ''      
     },
@@ -50,6 +50,20 @@ const Requests = () => {
     },
   });
 
+  //for edit on modal   
+  const getSpecificBloodRequest = (id) => {
+    BloodRequest.getSpecificBloodRequest(id).then((response) => {
+      var bloodRequest = response.data.data[0]
+      form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
+                      user_id: bloodRequest.attributes.user_id.toString(),
+                      blood_type_id: bloodRequest.attributes.blood_type_id.toString(),
+                      request_type_id: bloodRequest.attributes.request_type_id.toString(),
+                      case_id: bloodRequest.attributes.case_id.toString()});   
+                         
+      setErrors(response.data.errors);            
+    }).catch(err => console.log(err));    
+  }    
+
   //table items
   useEffect(() => {
     const getBloodRequests = () => {
@@ -60,20 +74,6 @@ const Requests = () => {
 
     getBloodRequests();
   }, []);
-
-  //for edit on modal   
-  const getSpecificBloodRequest = (id) => {
-    BloodRequest.getSpecificBloodRequest(id).then((response) => {
-      form.setValues({date_time: new Date(response.data.data[0].attributes.date_time),
-                      user_id: response.data.data[0].attributes.user_id.toString(),
-                      blood_type_id: response.data.data[0].attributes.blood_type_id.toString(),
-                      request_type_id: response.data.data[0].attributes.request_type_id.toString(),
-                      case_id: response.data.data[0].attributes.case_id.toString()});   
-                         
-      setErrors(response.data.errors);      
-      console.log(form.values);
-    }).catch(err => console.log(err));    
-  }    
 
   //dropdown items
   useEffect(() => {
@@ -111,6 +111,7 @@ const Requests = () => {
   const createBloodRequest = (payload) => {
     BloodRequest.create(payload).then((response) => {
       setErrors(response.data.errors);
+      console.log(response.data.errors);
       setIsDrawerOpened(false);      
     }).catch(err => console.log(err));    
   }

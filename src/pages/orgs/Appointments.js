@@ -14,7 +14,7 @@ const Appointments = () => {
   const [valueDate, setValueDate] = useState(new Date());
   const [valueTime, setValueTime] = useState(new Date());
   //for table items
-  const [appointments, setAppointments] = useState([]);
+  const [orgAppointments, setAppointments] = useState([]);
 
   useEffect(() => {
     const getAppointments = () => {
@@ -41,7 +41,7 @@ const Appointments = () => {
     }).catch(err => console.log(err));    
   }
 
-  const rows = appointments.map((element) => (
+  const rows = orgAppointments.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.donor_name}</td>
       <td>{element.attributes.blood_type_name}</td>
