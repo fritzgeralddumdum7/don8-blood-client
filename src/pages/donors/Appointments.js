@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
-import { Table, Card, Badge, Button, Group, Drawer, Stack } from '@mantine/core';
+import { Table, Card, Badge, Button, Group, Drawer, Stack, Modal } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Receipt } from 'tabler-icons-react';
@@ -8,16 +8,18 @@ import { Appointment } from '@/services';
 import moment from 'moment';
 
 const Appointments = () => {
-  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
+  const [opened, setOpened] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   //for table items
-  const [donorAppointments, setAppointments] = useState([]);
-  
+  const [donorAppointments, setDonorAppointments] = useState([]);
+  //selected appointment
+  const [appointmentId, setAppointmentId] = useState(0);
+
   const form = useForm({
     initialValues: {
       date_time: new Date(),
-      user_id: 3, //change this with donor's id
+      user_id: 11, //change this with donor's id
       blood_request_id: '',
     },
 
@@ -27,8 +29,16 @@ const Appointments = () => {
     },
   });
 
+  //table items
+  const getDonorAppointments = () => {
+    Appointment.getDonorAppointments(11).then((response) => { //change this with donor's id
+      setDonorAppointments(response.data.data);    
+    }).catch(err => console.log(err));
+  };
+
   //for edit on modal   
   const getSpecificAppoinment = (id) => {
+    setAppointmentId(id);
     Appointment.getSpecificAppointment(id).then((response) => {
       var appointment = response.data.data[0]
       form.setValues({date_time: new Date(appointment.attributes.date_time),
@@ -40,20 +50,14 @@ const Appointments = () => {
   }
 
   const updateAppointment = (payload) => {
-    Appointment.update(7, payload).then((response) => { //change this with appointment id
+    Appointment.update(appointmentId, payload).then((response) => {
+      getDonorAppointments();
       setErrors(response.data.errors);
-      setIsDrawerOpened(false);      
-      console.log(response.data.errors);
+      setOpened(false);
     }).catch(err => console.log(err));    
   }
 
   useEffect(() => {
-    const getDonorAppointments = () => {
-      Appointment.getDonorAppointments(6).then((response) => { //change this with donor's id
-        setAppointments(response.data.data);    
-      }).catch(err => console.log(err));
-    };
-
     getDonorAppointments();
   }, []);
 
@@ -71,7 +75,7 @@ const Appointments = () => {
         <Group>
           <Button leftIcon={<Receipt />} onClick={() => {
           getSpecificAppoinment(element.id);
-          setIsDrawerOpened(true);
+          setOpened(true);
           setIsEdit(true);
           }}>
             Rebook
@@ -86,34 +90,30 @@ const Appointments = () => {
 
   return (
     <Wrapper>
-      <Drawer
-        opened={isDrawerOpened}
-        onClose={() => setIsDrawerOpened(false)}
-        title={isEdit ? 'Edit Appoinment' : 'Create Appoinment'}
-        padding="xl"
-        size="xl"
-        styles={() => ({
-          title: { fontWeight: 'bold' }
-        })}
+      <Modal
+        centered
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title="Set Schedule"
       >
         <form onSubmit={form.onSubmit((values) => updateAppointment(values))}>
           <Stack>
-            <DatePicker 
-              placeholder="Select date" 
-              label="Event date" 
-              required 
-              {...form.getInputProps('date_time')}
+            <DatePicker
+              placeholder="Select date"
+              label="Event date"
+              required
+              {...form.getInputProps("date_time")}
             />
-            <TimeInput 
-              label="Pick time" 
-              format="12" 
-              {...form.getInputProps('date_time')}
+            <TimeInput
+              label="Pick time"
+              format="12"
+              {...form.getInputProps("date_time")}
             />
-            <Button type='submit'>Save</Button>
+            <Button type="submit">Save</Button>
           </Stack>
-        </form>        
-      </Drawer>
-      <Card shadow="sm" mt='sm'>
+        </form>
+      </Modal>
+      <Card shadow="sm" mt="sm">
         <Table striped highlightOnHover>
           <thead>
             <tr>

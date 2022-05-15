@@ -12,26 +12,28 @@ import {
   Drawer,
   Text,
   ListItem,
+  Modal,
+  Anchor,
 } from "@mantine/core";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { Pencil, ArrowBigRightLines } from "tabler-icons-react";
+import { Receipt } from "tabler-icons-react";
 import AlertDialog from "@/components/AlertDialog";
 import { BloodRequest, Appointment } from "@/services";
 import moment from "moment";
 
 const Requests = () => {
-  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
+  const [opened, setOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
-
+  
   const form = useForm({
     initialValues: {
       date_time: new Date(),
-      user_id: 3, //change this with donor's id
+      user_id: '',
       blood_request_id: "",
     },
 
@@ -42,32 +44,31 @@ const Requests = () => {
   });
 
   //table items
-  useEffect(() => {
-    const getBloodRequests = () => {
-      BloodRequest.getBloodRequests()
-        .then((response) => {
-          setBloodRequests(response.data.data);
-        })
-        .catch((err) => console.log(err));
-    };
+  const getBloodRequests = () => {
+    BloodRequest.getBloodRequestsPerBloodType(1)//get blood_type_id of the user who logged in (donor)
+      .then((response) => {
+        setBloodRequests(response.data.data);
+      })
+      .catch((err) => console.log(err));
+  };
 
+  useEffect(() => {
     getBloodRequests();
   }, []);
 
   const createAppointment = (payload) => {
     Appointment.create(payload)
       .then((response) => {
+        getBloodRequests();
         setErrors(response.data.errors);
-        setIsDrawerOpened(false);
+        setOpened(false);
       })
       .catch((err) => console.log(err));
   };
 
   //for creation of appointment on modal
   const getSpecificBloodRequest = (id) => {
-    form.setValues({ date_time: new Date(),
-      blood_request_id: id,
-      user_id: 3}); //change this with donor's id
+    form.setValues({ date_time: new Date(), blood_request_id: id, user_id: 11 }); //change this with donor's id
   };
 
   const rows = bloodRequests.map((element) => (
@@ -86,14 +87,14 @@ const Requests = () => {
       </td>
       <td>
         <Button
-          leftIcon={<ArrowBigRightLines />}
+          leftIcon={<Receipt />}
           onClick={() => {
             getSpecificBloodRequest(element.id);
-            setIsDrawerOpened(true);
+            setOpened(true);
             setIsEdit(true);
           }}
         >
-          Book
+          Make Appointment
         </Button>
       </td>
     </tr>
@@ -101,15 +102,11 @@ const Requests = () => {
 
   return (
     <Wrapper>
-      <Drawer
-        opened={isDrawerOpened}
-        onClose={() => setIsDrawerOpened(false)}
-        title={isEdit ? "Edit Request" : "Create Request"}
-        padding="xl"
-        size="xl"
-        styles={() => ({
-          title: { fontWeight: "bold" },
-        })}
+      <Modal
+        centered
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title="Set Schedule"
       >
         <form onSubmit={form.onSubmit((values) => createAppointment(values))}>
           <Stack>
@@ -124,10 +121,12 @@ const Requests = () => {
               format="12"
               {...form.getInputProps("date_time")}
             />
-            <Button type="submit">Save</Button>
+            <Anchor href="/appointments">
+              <Button type="submit">Save</Button>
+            </Anchor>
           </Stack>
         </form>
-      </Drawer>
+      </Modal>
       <AlertDialog
         isToggled={isDialogOpened}
         setIsToggled={setIsDialogOpened}
