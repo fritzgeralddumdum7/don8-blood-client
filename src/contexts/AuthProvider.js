@@ -3,15 +3,12 @@ import Cookies from 'js-cookie';
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children, authUser }) => {
-  const [user, setUser] = useState(authUser);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
 
   const login = async (user, authorization) => {
     setUser(user);
-    const cookieObj = {
-      access_token: authorization,
-      user: { ...user, role: 2 }
-    }
+    const cookieObj = { access_token: authorization, user }
     Cookies.set('don8_blood', JSON.stringify(cookieObj), { expires: 1 });
   };
 
@@ -20,7 +17,12 @@ export const AuthProvider = ({ children, authUser }) => {
     Cookies.remove('don8_blood');
   }
 
-  useEffect(() => setUser(authUser));
+  useEffect(() => {
+    const data = Cookies.get('don8_blood');
+    if (data) {
+      setUser(JSON.parse(data).user);
+    }
+  }, [])
 
   const stateValues = {
     user,

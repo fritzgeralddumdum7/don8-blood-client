@@ -9,7 +9,8 @@ import {
 import FirstStep from '@/components/SignUp/FirstStep';
 import SecondStep from '@/components/SignUp/SecondStep';
 import FinalStep from '@/components/SignUp/FinalStep';
-import { User } from '@/services';
+import { User, CityMunicipality } from '@/services';
+import { formatAsSelectData } from '@/helpers';
 
 const SignUp = () => {
   const [visible, setVisible] = useState(false);
@@ -18,20 +19,32 @@ const SignUp = () => {
   const [userInfo, setUserInfo] = useState({});
   const [role, setRole] = useState('');
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [cities, setCities] = useState([]);
 
   const nextStepHandler = () => {
-    if (active === 2) {
+    if (active === 2 || error) {
       return
     }
     setActive(state => state += 1);
   }
 
   const prevStepHandler = () => {
-    setActive(state => state -= 1);
+    if (active !== 0) {
+      setActive(state => state -= 1);
+    }
   }
 
   const setUserInfoHandler = (user) => {
     setUserInfo(state => ({ ...state, ...user }));
+  }
+
+  const fetchCityHandler = (id) => {
+    CityMunicipality.getCityMunicipalities(id)
+      .then(res => {
+        const data = res.data.data;
+        setCities(formatAsSelectData(data, 'name'));
+      }).catch(err => console.error(err))
   }
 
   useEffect(() => {
@@ -41,6 +54,11 @@ const SignUp = () => {
         .then(() => {
           navigate('/login');
         })
+        .catch(error => {
+          const res = error.response.data;
+          setError(res.email[0]);
+          setActive(0);
+        })
         .finally(() => setVisible(false))
     }
   }, [userInfo, isFinal]);
@@ -49,13 +67,14 @@ const SignUp = () => {
     <Box>
       <LoadingOverlay visible={visible} />
       <Container size='md' pt={100} pb={150}>
-        <Stepper active={active <= 2 && active} onStepClick={setActive} breakpoint="sm">
+        <Stepper active={active <= 2 && active} breakpoint="sm">
           <Stepper.Step label="First step" description="Create account">
             <FirstStep
               nextStepHandler={nextStepHandler}
               prevStepHandler={prevStepHandler}
               userInfo={userInfo}
               setUserInfoHandler={setUserInfoHandler}
+              error={error}
             />
           </Stepper.Step>
           <Stepper.Step label="Second step" description="Basic Info">
@@ -64,6 +83,9 @@ const SignUp = () => {
               prevStepHandler={prevStepHandler}
               userInfo={userInfo}
               setUserInfoHandler={setUserInfoHandler}
+              setCities={setCities}
+              cities={cities}
+              fetchCityHandler={fetchCityHandler}
             />
           </Stepper.Step>
           <Stepper.Step label="Final step" description="Profile">

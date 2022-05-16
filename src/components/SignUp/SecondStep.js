@@ -10,8 +10,11 @@ import {
 import { DatePicker } from '@mantine/dates';
 import FooterAction from '@/components/SignUp/FooterAction';
 import { useForm } from '@mantine/form';
+import { useSelector } from 'react-redux';
 
-const SecondStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, userInfo }) => {
+const SecondStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, userInfo, fetchCityHandler, cities }) => {
+  const { provinces } = useSelector(state => state.provinces);
+
   const form = useForm({
     initialValues: userInfo,
     validate: {
@@ -19,7 +22,7 @@ const SecondStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, user
       lastname: (value) => value ? null : 'Last name is required',
       birthday: (value) => value ? null : 'Birthday is required',
       province: (value) => value ? null : 'Province is required',
-      city: (value) => value ? null : 'City is required',
+      city_municipality_id: (value) => value ? null : 'City / Municipality is required',
       middlename: (value) => (!value || value) && null,
       address: (value) => (!value || value) && null
     },
@@ -28,7 +31,6 @@ const SecondStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, user
   return (
     <Box pt={50}>
       <form onSubmit={form.onSubmit((values) => {
-        console.log('heheh im done')
         setUserInfoHandler(values);
         nextStepHandler();
       })}>
@@ -64,27 +66,26 @@ const SecondStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, user
               label="Province"
               placeholder="Select a province"
               size='lg'
-              data={[
-                { value: '1', label: 'Donor' },
-                { value: '2', label: 'Organization' },
-              ]}
+              data={provinces}
+              onChange={(event) => {
+                fetchCityHandler(event);
+                form.setValues(values => ({...values, province: event }));
+                form.setFieldValue('city', null);
+              }}
+              value={form.values.province}
               searchable
-              {...form.getInputProps('province')}
             />
             <Select
               label="City / Municipality"
-              placeholder="Select a municipality"
+              placeholder={form.values.province ? 'Select a municipality' : 'Select province first'}
               size='lg'
-              data={[
-                { value: '1', label: 'Donor' },
-                { value: '2', label: 'Organization' },
-              ]}
+              data={cities}
               searchable
-              {...form.getInputProps('city')}
+              {...form.getInputProps('city_municipality_id')}
             />
           </SimpleGrid>
           <TextInput
-            label="address"
+            label="Address"
             size='lg'
             {...form.getInputProps('address')}
           />

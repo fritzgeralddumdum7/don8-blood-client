@@ -15,7 +15,6 @@ import {
   Box,
   ThemeIcon
 } from '@mantine/core';
-import { useLocation } from 'react-router-dom';
 import { DONOR_NAV_ITEMS, ORGS_NAV_ITEMS, ADMIN_NAV_ITEMS } from '@/constant';
 import { Pencil, Power } from 'tabler-icons-react';
 import { useAuth } from '@/contexts/AuthProvider';
@@ -26,8 +25,6 @@ const Wrapper = ({ children }) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const date = new Date();
-  const location = useLocation();
-  const role = 2;
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -110,10 +107,10 @@ const Wrapper = ({ children }) => {
                   root: {
                     border: '1px solid #15aabf'
                   }
-                })} color="cyan" radius="xl">MK</Avatar>
+                })} color="cyan" radius="xl">BD</Avatar>
                 <Box>
-                  <Text size='sm' sx={{ lineHeight: '20px' }}>Ermzkie Elzkie Fritzkie</Text>
-                  <Text size='sm' color='#868e96' sx={{ lineHeight: '20px' }}>ermzkie@gmail.com</Text>
+                  <Text size='sm' sx={{ lineHeight: '20px' }}>{auth.user?.firstname} {auth.user?.lastname}</Text>
+                  <Text size='sm' color='#868e96' sx={{ lineHeight: '20px' }}>{auth.user?.email}</Text>
                 </Box>
               </Group>
             }>
