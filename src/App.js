@@ -26,13 +26,14 @@ import { useDispatch } from 'react-redux';
 
 import { fetchBloodTypes } from '@/redux/bloodTypes';
 import { fetchProvinces } from '@/redux/provinces';
-import { fetchOrgTypes } from '@/redux/orgTypes';
+import { fetchOrgTypes, fetchOrgs } from '@/redux/orgs';
 
 const App = () => {
   const [authUser, setAuthUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const [isMounted, setIsMounted] = useState(false);
 
   const redirectPath = location.pathname || '/';
 
@@ -56,10 +57,14 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchBloodTypes());
-    dispatch(fetchProvinces());
-    dispatch(fetchOrgTypes());
-  }, []);
+    setIsMounted(true);
+    if (isMounted) {
+      dispatch(fetchBloodTypes());
+      dispatch(fetchProvinces());
+      dispatch(fetchOrgTypes());
+      dispatch(fetchOrgs());
+    }
+  }, [isMounted]);
 
   return (
     <AuthProvider authUser={authUser}>

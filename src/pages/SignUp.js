@@ -61,7 +61,6 @@ const SignUp = () => {
         })
         .finally(() => setVisible(false))
     }
-    console.log(userInfo)
   }, [userInfo, isFinal]);
 
   return (

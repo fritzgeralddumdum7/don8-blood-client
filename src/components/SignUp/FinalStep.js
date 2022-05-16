@@ -2,7 +2,6 @@ import {
   Container,
   Select,
   Stack,
-  TextInput,
   Box,
   Title
 } from '@mantine/core';
@@ -12,7 +11,7 @@ import { useSelector } from 'react-redux';
 
 const FinalStep = ({ role, setRole, nextStepHandler, prevStepHandler, setUserInfoHandler, userInfo, setIsFinal }) => {
   const { bloodTypes } = useSelector(state => state.bloodTypes);
-  const { orgTypes } = useSelector(state => state.orgTypes);
+  const { orgs } = useSelector(state => state.orgs);
 
   const donorValidations = {
     role: (value) => value ? null : 'Role is required',
@@ -20,7 +19,7 @@ const FinalStep = ({ role, setRole, nextStepHandler, prevStepHandler, setUserInf
   }
   const orgValidations = {
     role: (value) => value ? null : 'Role is required',
-    organization_id: (value) => value ? null : 'Organization type is required',
+    organization_id: (value) => value ? null : 'Organization is required',
   }
   const form = useForm({
     initialValues: userInfo,
@@ -47,10 +46,10 @@ const FinalStep = ({ role, setRole, nextStepHandler, prevStepHandler, setUserInf
     } else if (role === '2') {
       return (
         <Select
-          label="Organization Type"
-          placeholder="Select organization type"
+          label="Organization"
+          placeholder="Select organization"
           size='lg'
-          data={orgTypes}
+          data={orgs}
           searchable
           onChange={(event) => {
             form.setFieldValue('organization_id', null);
