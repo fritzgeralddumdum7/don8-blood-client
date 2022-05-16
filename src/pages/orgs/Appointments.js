@@ -14,34 +14,23 @@ const Appointments = () => {
   const [valueDate, setValueDate] = useState(new Date());
   const [valueTime, setValueTime] = useState(new Date());
   //for table items
-  const [appointments, setAppointments] = useState([]);
+  const [orgAppointments, setOrgAppointments] = useState([]);
+
+  const getOrgAppointments = () => {
+    Appointment.getAppointments().then((response) => {
+      setOrgAppointments(response.data.data);    
+    }).catch(err => console.log(err));
+  };
 
   useEffect(() => {
-    const getAppointments = () => {
-      Appointment.getAppointments().then((response) => {
-        setAppointments(response.data.data);    
-      }).catch(err => console.log(err));
-    };
-
-    getAppointments();
+    getOrgAppointments();
   }, []);
 
-  const createAppointment = () =>{
-    const payload = {
-      "date_time": new Date(valueDate.getFullYear(), valueDate.getMonth(), valueDate.getDate(), valueTime.getHours(), valueTime.getMinutes()),
-      "user_id": 3,
-      "blood_request_id": 1,//get this from props?
-      "is_completed": false,
-      "status": 1
-    };
-    
-    Appointment.create(payload).then((response) => {
-      setErrors(response.data.errors);
-      setIsDrawerOpened(false);      
-    }).catch(err => console.log(err));    
+  const updateAppointment = () =>{
+     
   }
 
-  const rows = appointments.map((element) => (
+  const rows = orgAppointments.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.donor_name}</td>
       <td>{element.attributes.blood_type_name}</td>
@@ -54,7 +43,7 @@ const Appointments = () => {
       <td>
         <Group>
           <Button leftIcon={<Receipt />}>
-            Rebook
+            Verify
           </Button>
           <Button leftIcon={<Receipt />} color='red'>
             Cancel
@@ -90,7 +79,7 @@ const Appointments = () => {
             value={valueTime}
             onChange={setValueTime}
           />
-          <Button onClick={createAppointment}>Save</Button>
+          <Button onClick={updateAppointment}>Save</Button>
         </Stack>
       </Drawer>
       <Card shadow="sm" mt='sm'>

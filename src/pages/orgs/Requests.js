@@ -31,13 +31,15 @@ const Requests = () => {
   const [bloodTypes, setBloodTypes] = useState([]); 
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
+  //selected blood request
+  const [bloodRequestId, setBloodRequestId] = useState(0);
   
   const form = useForm({
     initialValues: {
       date_time: new Date(),
-      user_id: 3,
+      user_id: '', 
       case_id: '',
-      organization_id: 5,
+      organization_id: 5, //change this with user's org id
       request_type_id: '',
       blood_type_id: ''      
     },
@@ -50,6 +52,21 @@ const Requests = () => {
     },
   });
 
+  //for edit on modal   
+  const getSpecificBloodRequest = (id) => {
+    setBloodRequestId(id);
+    BloodRequest.getSpecificBloodRequest(id).then((response) => {
+      var bloodRequest = response.data.data[0];
+      form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
+                      user_id: bloodRequest.attributes.user_id.toString(),
+                      blood_type_id: bloodRequest.attributes.blood_type_id.toString(),
+                      request_type_id: bloodRequest.attributes.request_type_id.toString(),
+                      case_id: bloodRequest.attributes.case_id.toString()});   
+                         
+      setErrors(response.data.errors);            
+    }).catch(err => console.log(err));    
+  }    
+
   //table items
   const getBloodRequests = () => {
     BloodRequest.getBloodRequests().then((response) => {
@@ -60,20 +77,6 @@ const Requests = () => {
   useEffect(() => {
     getBloodRequests();
   }, []);
-
-  //for edit on modal   
-  const getSpecificBloodRequest = (id) => {
-    BloodRequest.getSpecificBloodRequest(id).then((response) => {
-      form.setValues({date_time: new Date(response.data.data[0].attributes.date_time),
-                      user_id: response.data.data[0].attributes.user_id.toString(),
-                      blood_type_id: response.data.data[0].attributes.blood_type_id.toString(),
-                      request_type_id: response.data.data[0].attributes.request_type_id.toString(),
-                      case_id: response.data.data[0].attributes.case_id.toString()});   
-                         
-      setErrors(response.data.errors);      
-      console.log(form.values);
-    }).catch(err => console.log(err));    
-  }    
 
   //dropdown items
   useEffect(() => {
@@ -116,6 +119,16 @@ const Requests = () => {
     }).catch(err => console.log(err));    
   }
 
+  const updateBloodRequest = (payload) => {
+    BloodRequest.update(bloodRequestId, payload).then((response) => {
+      getBloodRequests();
+      setErrors(response.data.errors);
+      setIsDrawerOpened(false);      
+      setIsEdit(false);
+      console.log(response.data.errors);
+    }).catch(err => console.log(err));    
+  }
+
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.code}</td>
@@ -154,7 +167,7 @@ const Requests = () => {
           title: { fontWeight: 'bold' }
         })}
       >
-        <form onSubmit={form.onSubmit((values) => createBloodRequest(values))}>
+        <form onSubmit={form.onSubmit((values) => isEdit? updateBloodRequest(values) : createBloodRequest(values))}>
           <Stack>
             <DatePicker 
               placeholder="Select date" 
@@ -172,8 +185,8 @@ const Requests = () => {
                 placeholder="Select here"
                 {...form.getInputProps('user_id')}
                 data = {[{ value: '3', label: 'Erma Win' },
-                { value: '6', label: 'Vinna Vinz' },
                 { value: '9', label: 'Prets' },
+                { value: '11', label: 'Elle' },
               ]}
                 searchable
               />

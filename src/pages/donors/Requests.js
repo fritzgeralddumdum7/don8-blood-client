@@ -1,32 +1,99 @@
-import { useState } from 'react';
-import Wrapper from '@/components/Wrapper';
-import { Table, Card, Badge, Button, Modal, Anchor, Group } from '@mantine/core';
-import { Receipt } from 'tabler-icons-react';
-import { DatePicker } from '@mantine/dates';
-
-const elements = [
-  { position: 6, mass: 12.011, symbol: 'C', name: 'Carbon' },
-  { position: 7, mass: 14.007, symbol: 'N', name: 'Nitrogen' },
-  { position: 39, mass: 88.906, symbol: 'Y', name: 'Yttrium' },
-  { position: 56, mass: 137.33, symbol: 'Ba', name: 'Barium' },
-  { position: 58, mass: 140.12, symbol: 'Ce', name: 'Cerium' },
-];
+import { useState, useEffect } from "react";
+import Wrapper from "@/components/Wrapper";
+import {
+  Table,
+  Card,
+  Badge,
+  Button,
+  Stack,
+  TextInput,
+  Select,
+  Group,
+  Drawer,
+  Text,
+  ListItem,
+  Modal,
+  Anchor,
+} from "@mantine/core";
+import { DatePicker, TimeInput } from "@mantine/dates";
+import { useForm } from "@mantine/form";
+import { Receipt } from "tabler-icons-react";
+import AlertDialog from "@/components/AlertDialog";
+import { BloodRequest, Appointment } from "@/services";
+import moment from "moment";
 
 const Requests = () => {
   const [opened, setOpened] = useState(false);
+  const [isDialogOpened, setIsDialogOpened] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [errors, setErrors] = useState({});
+  //for table items
+  const [bloodRequests, setBloodRequests] = useState([]);
+  
+  const form = useForm({
+    initialValues: {
+      date_time: new Date(),
+      user_id: '',
+      blood_request_id: "",
+    },
 
-  const rows = elements.map((element) => (
-    <tr key={element.name}>
-      <td>{element.position}</td>
-      <td>{element.position}</td>
-      <td>{element.position}</td>
-      <td>{element.symbol}</td>
-      <td>{element.mass}</td>
+    validate: {
+      date_time: (value) => (value ? null : "No schedule"),
+      blood_request_id: (value) => (value ? null : "No selected request"),
+    },
+  });
+
+  //table items
+  const getBloodRequests = () => {
+    BloodRequest.getBloodRequestsPerBloodType(1)//get blood_type_id of the user who logged in (donor)
+      .then((response) => {
+        setBloodRequests(response.data.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getBloodRequests();
+  }, []);
+
+  const createAppointment = (payload) => {
+    Appointment.create(payload)
+      .then((response) => {
+        getBloodRequests();
+        setErrors(response.data.errors);
+        setOpened(false);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  //for creation of appointment on modal
+  const getSpecificBloodRequest = (id) => {
+    form.setValues({ date_time: new Date(), blood_request_id: id, user_id: 11 }); //change this with donor's id
+  };
+
+  const rows = bloodRequests.map((element) => (
+    <tr key={element.id}>
+      <td>{element.attributes.code}</td>
+      <td>{element.attributes.blood_type_name}</td>
+      <td>{element.attributes.request_type_name}</td>
+      <td>{element.attributes.case_name}</td>
       <td>
-        <Badge color='red' variant="filled">Pending</Badge>
+        {moment(element.attributes.date_time).format("MM/DD/YYYY hh:mm a")}
       </td>
       <td>
-        <Button leftIcon={<Receipt />} onClick={() => setOpened(true)}>
+        <Badge color="red" variant="filled">
+          Pending
+        </Badge>
+      </td>
+      <td>
+        <Button
+          leftIcon={<Receipt />}
+          onClick={() => {
+            getSpecificBloodRequest(element.id);
+            setOpened(true);
+            setIsEdit(true);
+          }}
+        >
           Make Appointment
         </Button>
       </td>
@@ -41,24 +108,39 @@ const Requests = () => {
         onClose={() => setOpened(false)}
         title="Set Schedule"
       >
-        <DatePicker placeholder="Pick date" required />
-        <Group position='right'>
-
-          <Anchor href='/appointments'>
-            <Button mt='sm'>
-              Confirm
-            </Button>
-          </Anchor>
-        </Group>
+        <form onSubmit={form.onSubmit((values) => createAppointment(values))}>
+          <Stack>
+            <DatePicker
+              placeholder="Select date"
+              label="Event date"
+              required
+              {...form.getInputProps("date_time")}
+            />
+            <TimeInput
+              label="Pick time"
+              format="12"
+              {...form.getInputProps("date_time")}
+            />
+            <Anchor href="/appointments">
+              <Button type="submit">Save</Button>
+            </Anchor>
+          </Stack>
+        </form>
       </Modal>
-      <Card shadow="sm" mt='sm'>
+      <AlertDialog
+        isToggled={isDialogOpened}
+        setIsToggled={setIsDialogOpened}
+        text="Would you like to delete?"
+        type="delete"
+      />
+      <Card shadow="sm" mt="sm">
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Organization</th>
+              <th>Tran. Code</th>
               <th>Blood Type</th>
-              <th>Blood Request Type</th>
-              <th>Category</th>
+              <th>Request Type</th>
+              <th>Case</th>
               <th>Schedule</th>
               <th>Status</th>
               <th>Actions</th>
@@ -69,6 +151,6 @@ const Requests = () => {
       </Card>
     </Wrapper>
   );
-}
+};
 
 export default Requests;
