@@ -7,6 +7,7 @@ import Appointment from '@/api/Appointment';
 import CityMunicipality from '@/api/CityMunicipality';
 import OrganizationType from '@/api/OrganizationType';
 import User from '@/api/User';
+import Province from '@/api/Province';
 
 export {
     BloodType,
@@ -17,5 +18,6 @@ export {
     Appointment,
     CityMunicipality,
     OrganizationType,  
-    User
+    User,
+    Province
 };

@@ -9,12 +9,20 @@ import {
 import FooterAction from '@/components/SignUp/FooterAction';
 import { useForm } from '@mantine/form';
 
-const FirstStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, userInfo }) => {
+const FirstStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, userInfo, error }) => {
   const form = useForm({
     initialValues: userInfo,
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email address'),
-      password: (value) => value ? null : 'Password is required',
+      password: (value) => {
+        if (!value) {
+          return 'Password is required';
+        } else if (value.length < 8) {
+          return 'Password must be at least 8 characters long';
+        }
+
+        return null;
+      },
       confirm_password: (value, values) => value === values.password && value ? null : 'Password does not match',
     },
   });
@@ -33,6 +41,7 @@ const FirstStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, userI
                 label="Email Address"
                 size='lg'
                 {...form.getInputProps('email')}
+                error={error}
               />
             </Box>
             <PasswordInput
@@ -43,7 +52,6 @@ const FirstStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, userI
             <PasswordInput
               size='lg'
               label="Confirm Password"
-              value={123123123}
               {...form.getInputProps('confirm_password')}
             />
           </Stack>
@@ -51,6 +59,7 @@ const FirstStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, userI
         <FooterAction
           nextStepHandler={nextStepHandler}
           prevStepHandler={prevStepHandler}
+          isFinal={error}
         />
       </form>
     </Box>

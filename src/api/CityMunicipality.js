@@ -1,12 +1,14 @@
 import API from './base';
 
 const CityMunicipality = {
-	getCityMunicipalities: async (province_id) => {
+	getCityMunicipalities: async (id) => {
 		const options = {
 			method: 'GET',
-			url: `/city_municipalities?province_id=${province_id}`
+			url: '/city_municipalities',
+			params: {
+				province_id: id
+			}
 		}
-		console.log(province_id);
 		return await API.request(options);
 	}
 }
