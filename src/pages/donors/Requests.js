@@ -21,6 +21,8 @@ import { Receipt } from "tabler-icons-react";
 import AlertDialog from "@/components/AlertDialog";
 import { BloodRequest, Appointment } from "@/services";
 import moment from "moment";
+import { useAuth } from '@/contexts/AuthProvider';
+import {formatDateTime} from '@/helpers';
 
 const Requests = () => {
   const [opened, setOpened] = useState(false);
@@ -30,9 +32,12 @@ const Requests = () => {
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
   
+  const auth = useAuth();
+
   const form = useForm({
     initialValues: {
       date_time: new Date(),
+      time: new Date(),
       user_id: '',
       blood_request_id: "",
     },
@@ -45,7 +50,7 @@ const Requests = () => {
 
   //table items
   const getBloodRequests = () => {
-    BloodRequest.getBloodRequestsPerBloodType(1)//get blood_type_id of the user who logged in (donor)
+    BloodRequest.getBloodRequestsPerBloodType(auth.user.blood_type_id)//get blood_type_id of the user who logged in (donor)
       .then((response) => {
         setBloodRequests(response.data.data);
       })
@@ -57,6 +62,8 @@ const Requests = () => {
   }, []);
 
   const createAppointment = (payload) => {
+    var final_date_time = formatDateTime(payload.date_time, payload.time);
+    payload = {...payload, date_time: final_date_time}
     Appointment.create(payload)
       .then((response) => {
         getBloodRequests();
@@ -68,7 +75,7 @@ const Requests = () => {
 
   //for creation of appointment on modal
   const getSpecificBloodRequest = (id) => {
-    form.setValues({ date_time: new Date(), blood_request_id: id, user_id: 11 }); //change this with donor's id
+    form.setValues({ date_time: new Date(), blood_request_id: id, user_id: auth.user.id }); //donor's id
   };
 
   const rows = bloodRequests.map((element) => (
@@ -119,7 +126,7 @@ const Requests = () => {
             <TimeInput
               label="Pick time"
               format="12"
-              {...form.getInputProps("date_time")}
+              {...form.getInputProps("time")}
             />
             <Anchor href="/appointments">
               <Button type="submit">Save</Button>

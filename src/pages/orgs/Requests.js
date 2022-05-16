@@ -17,8 +17,10 @@ import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Pencil, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
-import { BloodType, Case, BloodRequest, RequestType } from '@/services';
+import { BloodType, Case, BloodRequest, RequestType, User } from '@/services';
 import moment from 'moment';
+import { useAuth } from '@/contexts/AuthProvider';
+import {formatDateTime} from '@/helpers';
 
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -29,17 +31,19 @@ const Requests = () => {
   const [cases, setCases] = useState([]); 
   const [requestTypes, setRequestTypes] = useState([]); 
   const [bloodTypes, setBloodTypes] = useState([]); 
+  const [patients, setPatients] = useState([]); 
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
   //selected blood request
   const [bloodRequestId, setBloodRequestId] = useState(0);
   
+  const auth = useAuth();
+
   const form = useForm({
     initialValues: {
       date_time: new Date(),
       user_id: '', 
       case_id: '',
-      organization_id: 5, //change this with user's org id
       request_type_id: '',
       blood_type_id: ''      
     },
@@ -58,6 +62,7 @@ const Requests = () => {
     BloodRequest.getSpecificBloodRequest(id).then((response) => {
       var bloodRequest = response.data.data[0];
       form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
+                      time: new Date(bloodRequest.attributes.date_time),
                       user_id: bloodRequest.attributes.user_id.toString(),
                       blood_type_id: bloodRequest.attributes.blood_type_id.toString(),
                       request_type_id: bloodRequest.attributes.request_type_id.toString(),
@@ -76,6 +81,17 @@ const Requests = () => {
 
   useEffect(() => {
     getBloodRequests();
+  }, []);
+
+  //dropdown items
+  useEffect(() => {
+    const getPatients = () => {
+      User.getByRole(3).then((response) => {//Role ID 3 = patient
+        setPatients(response.data.data);    
+      }).catch(err => console.log(err));
+    };
+
+    getPatients();
   }, []);
 
   //dropdown items
@@ -112,7 +128,9 @@ const Requests = () => {
   }, []);
 
   const createBloodRequest = (payload) => {
-    BloodRequest.create({...payload, user_id: 11}).then((response) => {
+    var final_date_time = formatDateTime(payload.date_time, payload.time);
+    BloodRequest.create({...payload, date_time: final_date_time, user_id: auth.user.id, organization_id: auth.user?.organization_id}).then((response) => {
+      console.log(response.data);
       getBloodRequests();
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
@@ -178,16 +196,18 @@ const Requests = () => {
             <TimeInput 
               label="Pick time" 
               format="12" 
-              {...form.getInputProps('date_time')}
+              {...form.getInputProps('time')}
             />
             <Select
                 label="Patient Name"
                 placeholder="Select here"
                 {...form.getInputProps('user_id')}
-                data = {[{ value: '3', label: 'Erma Win' },
-                { value: '9', label: 'Prets' },
-                { value: '11', label: 'Elle' },
-              ]}
+                data = {patients.map(element => {
+                  let item = {};
+                  item["value"] = element.id;
+                  item["label"] = element.attributes.name;
+                  return item;
+                })}
                 searchable
               />
             <Select

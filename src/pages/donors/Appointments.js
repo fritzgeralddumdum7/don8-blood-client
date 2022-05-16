@@ -6,6 +6,7 @@ import { useForm } from '@mantine/form';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';
+import { useAuth } from '@/contexts/AuthProvider';
 
 const Appointments = () => {
   const [opened, setOpened] = useState(false);
@@ -16,10 +17,12 @@ const Appointments = () => {
   //selected appointment
   const [appointmentId, setAppointmentId] = useState(0);
 
+  const auth = useAuth();
+
   const form = useForm({
     initialValues: {
       date_time: new Date(),
-      user_id: 11, //change this with donor's id
+      user_id: auth.user.id,
       blood_request_id: '',
     },
 
@@ -31,7 +34,7 @@ const Appointments = () => {
 
   //table items
   const getDonorAppointments = () => {
-    Appointment.getDonorAppointments(11).then((response) => { //change this with donor's id
+    Appointment.getDonorAppointments(auth.user.id).then((response) => { //donor's id
       setDonorAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };

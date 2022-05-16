@@ -18,7 +18,8 @@ const BloodRequest = {
   getBloodRequestsPerBloodType: async (blood_type_id) => {
     const options = {
       method: 'GET',
-      url: `/blood_requests?blood_type_id=${blood_type_id}`
+      url: `/blood_requests`,
+      params: {blood_type_id}
     }
     return await API.request(options);
   },

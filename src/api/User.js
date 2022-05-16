@@ -24,6 +24,14 @@ const Organization = {
 			data
 		}
 		return await API.request(options);
+	},
+	getByRole: async (role) => {
+		const options = {
+			method: 'GET',
+			url: '/users',
+			params: {role}
+		}
+		return await API.request(options);
 	}
 }
 
