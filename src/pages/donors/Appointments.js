@@ -66,13 +66,14 @@ const Appointments = () => {
 
   const rows = donorAppointments.map((element) => (
     <tr key={element.id}>
-      <td>{element.attributes.donor_name}</td>
+      <td>{element.attributes.organization_name}</td>
       <td>{element.attributes.blood_type_name}</td>
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
+      <td>{element.attributes.blood_request_code}</td>
       <td>
-        <Badge color='red' variant="filled">Pending</Badge>
+        <Badge color={element.attributes.is_completed? 'green' : 'red'} variant="filled">{element.attributes.is_completed? 'Completed' : 'Pending'}</Badge>
       </td>
       <td>
         <Group>
@@ -120,11 +121,12 @@ const Appointments = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Donor</th>
+              <th>Organization</th>
               <th>Blood Type</th>
               <th>Request Type</th>
               <th>Case</th>
               <th>Schedule</th>
+              <th>Request Code</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>

@@ -15,11 +15,11 @@ const BloodRequest = {
     }
     return await API.request(options);
   },
-  getBloodRequestsPerBloodType: async (blood_type_id) => {
+  getOpenBloodRequestsForDonor: async (authuser) => {
     const options = {
       method: 'GET',
       url: `/blood_requests`,
-      params: {blood_type_id}
+      params: {blood_type_id: authuser.blood_type_id, user_id: authuser.id}
     }
     return await API.request(options);
   },
@@ -37,6 +37,14 @@ const BloodRequest = {
         method: 'PATCH',
         url: `/blood_requests/${id}`,
         data: payload,
+    };
+
+    return await API.request(options);
+  },
+  close: async (id) => {
+    const options = {
+        method: 'PATCH',
+        url: `/blood_requests/${id}/close`,        
     };
 
     return await API.request(options);

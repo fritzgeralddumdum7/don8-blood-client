@@ -50,7 +50,7 @@ const Requests = () => {
 
   //table items
   const getBloodRequests = () => {
-    BloodRequest.getBloodRequestsPerBloodType(auth.user.blood_type_id)//get blood_type_id of the user who logged in (donor)
+    BloodRequest.getOpenBloodRequestsForDonor(auth.user)//donor
       .then((response) => {
         setBloodRequests(response.data.data);
       })
@@ -81,6 +81,7 @@ const Requests = () => {
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.code}</td>
+      <td>{element.attributes.organization_name}</td>
       <td>{element.attributes.blood_type_name}</td>
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
@@ -88,8 +89,8 @@ const Requests = () => {
         {moment(element.attributes.date_time).format("MM/DD/YYYY hh:mm a")}
       </td>
       <td>
-        <Badge color="red" variant="filled">
-          Pending
+        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
+          {element.attributes.is_closed? 'Closed' : 'Pending'}
         </Badge>
       </td>
       <td>
@@ -144,7 +145,8 @@ const Requests = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Tran. Code</th>
+              <th>B.R. Code</th>
+              <th>Organization</th>
               <th>Blood Type</th>
               <th>Request Type</th>
               <th>Case</th>

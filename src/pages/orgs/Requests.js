@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { Pencil, Trash } from 'tabler-icons-react';
+import { Clock, Pencil, Receipt, Receipt2, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
 import { BloodType, Case, BloodRequest, RequestType, User } from '@/services';
 import moment from 'moment';
@@ -147,6 +147,12 @@ const Requests = () => {
     }).catch(err => console.log(err));    
   }
 
+  const closeBloodRequest = (id) => {
+    BloodRequest.close(id).then((response) => {
+      getBloodRequests();      
+    }).catch(err => console.log(err));    
+  }
+
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.code}</td>
@@ -156,7 +162,7 @@ const Requests = () => {
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>
-        <Badge color='red' variant="filled">Pending</Badge>
+        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">{element.attributes.is_closed? 'Closed' : 'Pending'}</Badge>
       </td>
       <td>
         <Button leftIcon={<Pencil />} onClick={() => {
@@ -168,6 +174,9 @@ const Requests = () => {
         </Button>
         <Button ml={8} color='red' leftIcon={<Trash />} onClick={() => setIsDialogOpened(true)}>
           Delete
+        </Button>
+        <Button ml={8} color='green' leftIcon={<Clock />} onClick={() => closeBloodRequest(element.id)}>
+          Close
         </Button>
       </td>
     </tr>

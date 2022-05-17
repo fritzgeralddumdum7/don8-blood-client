@@ -30,6 +30,13 @@ const Appointments = () => {
      
   }
 
+  const completeAppointment = (id) => {
+    Appointment.complete(id).then((response) => {
+      getOrgAppointments();      
+      console.log(response.data.errors);
+    }).catch(err => console.log(err));    
+  }
+
   const rows = orgAppointments.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.donor_name}</td>
@@ -38,12 +45,14 @@ const Appointments = () => {
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>
-        <Badge color='red' variant="filled">Pending</Badge>
+        <Badge color={element.attributes.is_completed? 'green' : 'red' } variant="filled">
+          {element.attributes.is_completed? 'Completed' : 'Pending'}
+        </Badge>
       </td>
       <td>
         <Group>
-          <Button leftIcon={<Receipt />}>
-            Verify
+          <Button leftIcon={<Receipt />} onClick={() => completeAppointment(element.id)}>
+            Complete
           </Button>
           <Button leftIcon={<Receipt />} color='red'>
             Cancel

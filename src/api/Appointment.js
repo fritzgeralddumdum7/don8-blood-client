@@ -38,6 +38,13 @@ const Appointment = {
     };
     return await API.request(options);
   },
+  complete: async (id) => {
+    const options = {
+        method: 'PATCH',
+        url: `/appointments/${id}/complete`,
+    };
+    return await API.request(options);
+  },
 }
 
 export default Appointment;
