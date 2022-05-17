@@ -129,7 +129,7 @@ const Requests = () => {
 
   const createBloodRequest = (payload) => {
     var final_date_time = formatDateTime(payload.date_time, payload.time);
-    BloodRequest.create({...payload, date_time: final_date_time, user_id: auth.user.id, organization_id: auth.user?.organization_id}).then((response) => {
+    BloodRequest.create({...payload, date_time: final_date_time, organization_id: auth.user?.organization_id}).then((response) => {
       console.log(response.data);
       getBloodRequests();
       setErrors(response.data.errors);
@@ -175,7 +175,7 @@ const Requests = () => {
         <Button ml={8} color='red' leftIcon={<Trash />} onClick={() => setIsDialogOpened(true)}>
           Delete
         </Button>
-        <Button ml={8} color='green' leftIcon={<Clock />} onClick={() => closeBloodRequest(element.id)}>
+        <Button ml={8} color='gray' leftIcon={<Clock />} onClick={() => closeBloodRequest(element.id)}>
           Close
         </Button>
       </td>
@@ -199,6 +199,7 @@ const Requests = () => {
             <DatePicker 
               placeholder="Select date" 
               label="Event date" 
+              minDate={new Date()}
               required 
               {...form.getInputProps('date_time')}
             />
@@ -269,7 +270,7 @@ const Requests = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Tran. Code</th>
+              <th>Request Code</th>
               <th>Patient</th>
               <th>Blood Type</th>
               <th>Request Type</th>

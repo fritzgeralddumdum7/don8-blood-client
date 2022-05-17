@@ -121,6 +121,7 @@ const Requests = () => {
             <DatePicker
               placeholder="Select date"
               label="Event date"
+              minDate={new Date()}
               required
               {...form.getInputProps("date_time")}
             />
@@ -145,7 +146,7 @@ const Requests = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>B.R. Code</th>
+              <th>Request Code</th>
               <th>Organization</th>
               <th>Blood Type</th>
               <th>Request Type</th>

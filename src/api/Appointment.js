@@ -8,6 +8,14 @@ const Appointment = {
     }
     return await API.request(options);
   },
+  getOrgDoneAppointments: async (organization_id) => {
+    const options = {
+      method: 'GET',
+      url: '/appointments',
+      params: {is_complete: true, organization_id: organization_id}
+    }
+    return await API.request(options);
+  },
   getSpecificAppointment: async (id) => {
     const options = {
       method: 'GET',
