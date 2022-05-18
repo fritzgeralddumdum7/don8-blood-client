@@ -1,33 +1,46 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import { useDispatch } from 'react-redux';
+import { fetchUserProfile, resetAuthUser } from '@/redux/users';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const [isAuth, setIsAuth] = useState(null);
 
-  const login = async (user, authorization) => {
-    setUser(user);
-    const cookieObj = { access_token: authorization, user }
-    Cookies.set('don8_blood', JSON.stringify(cookieObj), { expires: 1 });
+  const login = async (authorization) => {
+    dispatch(fetchUserProfile());
+    setIsAuth(true);
+    const token = authorization.split(' ')[1];
+    Cookies.set('avion_access_token', token, { expires: 1 });
   };
 
   const logout = async () => {
-    setUser(null);
-    Cookies.remove('don8_blood');
+    dispatch(resetAuthUser());
+    Cookies.remove('avion_access_token');
   }
 
   useEffect(() => {
-    const data = Cookies.get('don8_blood');
+    const data = Cookies.get('avion_access_token');
     if (data) {
-      setUser(JSON.parse(data).user);
+      setIsAuth(true);
+    } else {
+      dispatch(resetAuthUser());
+      setIsAuth(false);
     }
   }, [])
 
+  useEffect(() => {
+    if (isAuth) {
+      dispatch(fetchUserProfile());
+    }
+  }, [isAuth])
+
   const stateValues = {
-    user,
     login,
-    logout
+    logout,
+    isAuth
   };
 
   return (
