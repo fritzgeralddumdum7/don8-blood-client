@@ -25,6 +25,7 @@ import {formatDateTime} from '@/helpers';
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
+  const [toProceed, setToProceed] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   //for dropdowns items
@@ -73,15 +74,16 @@ const Requests = () => {
   }    
 
   //table items
-  const getBloodRequests = () => {
-    BloodRequest.getBloodRequests().then((response) => {
+  const getOrgBloodRequests = (organization_id) => {
+    BloodRequest.getOrgAllBloodRequests(organization_id).then((response) => {
       setBloodRequests(response.data.data);    
     }).catch(err => console.log(err));
   };
 
   useEffect(() => {
-    getBloodRequests();
-  }, []);
+    if (auth.user)
+      getOrgBloodRequests(auth.user.organization_id);
+  }, [auth]);
 
   //dropdown items
   useEffect(() => {
@@ -130,8 +132,7 @@ const Requests = () => {
   const createBloodRequest = (payload) => {
     var final_date_time = formatDateTime(payload.date_time, payload.time);
     BloodRequest.create({...payload, date_time: final_date_time, organization_id: auth.user?.organization_id}).then((response) => {
-      console.log(response.data);
-      getBloodRequests();
+      getOrgBloodRequests(auth.user.organization_id);
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
     }).catch(err => console.log(err));    
@@ -139,18 +140,21 @@ const Requests = () => {
 
   const updateBloodRequest = (payload) => {
     BloodRequest.update(bloodRequestId, payload).then((response) => {
-      getBloodRequests();
+      getOrgBloodRequests(auth.user.organization_id);
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
-      setIsEdit(false);
-      console.log(response.data.errors);
+      setIsEdit(false);      
     }).catch(err => console.log(err));    
   }
 
   const closeBloodRequest = (id) => {
     BloodRequest.close(id).then((response) => {
-      getBloodRequests();      
+      getOrgBloodRequests(auth.user.organization_id);      
     }).catch(err => console.log(err));    
+  }
+
+  const deleteBloodRequest = (id) => {
+    
   }
 
   const rows = bloodRequests.map((element) => (
@@ -162,21 +166,28 @@ const Requests = () => {
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>
-        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">{element.attributes.is_closed? 'Closed' : 'Pending'}</Badge>
+        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
+          {element.attributes.is_closed? 'Closed' : 'Pending'}
+        </Badge>
       </td>
       <td>
-        <Button leftIcon={<Pencil />} onClick={() => {
-          getSpecificBloodRequest(element.id);
-          setIsDrawerOpened(true);
-          setIsEdit(true);
-        }}>
+        <Button leftIcon={<Pencil />} 
+          disabled={element.attributes.is_closed}
+          onClick={() => {
+            getSpecificBloodRequest(element.id);
+            setIsDrawerOpened(true);
+            setIsEdit(true);          
+          }}>
           Edit
         </Button>
-        <Button ml={8} color='red' leftIcon={<Trash />} onClick={() => setIsDialogOpened(true)}>
+        <Button ml={8} color='red' leftIcon={<Trash />}
+          disabled={element.attributes.is_closed}
+          onClick={() => setIsDialogOpened(true)}>
           Delete
         </Button>
-        <Button ml={8} color='gray' leftIcon={<Clock />} onClick={() => closeBloodRequest(element.id)}>
-          Close
+        <Button ml={8} color='gray' leftIcon={<Clock />}
+          onClick={() => closeBloodRequest(element.id)}>
+          {element.attributes.is_closed? 'Re-open' : 'Close'}
         </Button>
       </td>
     </tr>
@@ -263,6 +274,8 @@ const Requests = () => {
       <AlertDialog
         isToggled={isDialogOpened}
         setIsToggled={setIsDialogOpened}
+        toProceed={toProceed}
+        setToProceed={setToProceed}
         text='Would you like to delete?'
         type='delete'
       />

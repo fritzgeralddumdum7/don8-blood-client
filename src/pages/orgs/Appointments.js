@@ -5,6 +5,7 @@ import { DatePicker, TimeInput } from '@mantine/dates';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';
+import { useAuth } from '@/contexts/AuthProvider';
 
 const Appointments = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -15,16 +16,19 @@ const Appointments = () => {
   const [valueTime, setValueTime] = useState(new Date());
   //for table items
   const [orgAppointments, setOrgAppointments] = useState([]);
+  
+  const auth = useAuth();
 
-  const getOrgAppointments = () => {
-    Appointment.getAppointments().then((response) => {
+  const getOrgAppointments = (organization_id) => {
+    Appointment.getOrgAllAppointments(organization_id).then((response) => {
       setOrgAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };
 
   useEffect(() => {
-    getOrgAppointments();
-  }, []);
+    if (auth.user)
+      getOrgAppointments(auth.user.organization_id);
+  }, [auth]);
 
   const updateAppointment = () =>{
      

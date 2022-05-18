@@ -34,7 +34,7 @@ const Appointments = () => {
 
   //table items
   const getDonorAppointments = () => {
-    Appointment.getDonorAppointments(auth.user.id).then((response) => { //donor's id
+    Appointment.getDonorAllAppointments(auth.user.id).then((response) => { //donor's id
       setDonorAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };

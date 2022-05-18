@@ -1,10 +1,11 @@
 import API from './base';
 
 const Appointment = {
-  getAppointments: async () => {
+  getOrgAllAppointments: async (organization_id) => {
     const options = {
       method: 'GET',
-      url: '/appointments'
+      url: '/appointments',
+      params: {organization_id}
     }
     return await API.request(options);
   },
@@ -12,7 +13,7 @@ const Appointment = {
     const options = {
       method: 'GET',
       url: '/appointments',
-      params: {is_complete: true, organization_id: organization_id}
+      params: {is_completed: true, organization_id: organization_id}
     }
     return await API.request(options);
   },
@@ -23,10 +24,19 @@ const Appointment = {
     }
     return await API.request(options);
   },
-  getDonorAppointments: async (id) => {
+  getDonorAllAppointments: async (id) => {
     const options = {
       method: 'GET',
-      url: `/appointments?user_id=${id}`
+      url: '/appointments',
+      params: {user_id: id}
+    }
+    return await API.request(options);
+  },
+  getDonorDoneAppointments: async (user_id) => {
+    const options = {
+      method: 'GET',
+      url: '/appointments',
+      params: {is_completed: true, user_id: user_id}
     }
     return await API.request(options);
   },

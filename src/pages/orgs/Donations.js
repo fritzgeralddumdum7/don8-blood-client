@@ -12,16 +12,16 @@ const Donations = () => {
 
   const auth = useAuth();
 
-  const getOrgAppointments = () => {
-    console.log(auth.user?.role);
-    Appointment.getOrgDoneAppointments(auth.user?.organization_id).then((response) => {
+  const getOrgAppointments = (organization_id) => {
+    Appointment.getOrgDoneAppointments(organization_id).then((response) => {
       setOrgAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };
 
   useEffect(() => {
-    getOrgAppointments();
-  }, []);
+    if (auth.user)
+      getOrgAppointments(auth.user.organization_id);
+  }, [auth]);
 
   const rows = orgAppointments.map((element) => (
     <tr key={element.id}>
