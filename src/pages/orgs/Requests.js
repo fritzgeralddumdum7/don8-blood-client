@@ -15,31 +15,36 @@ import {
 } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { Pencil, Trash } from 'tabler-icons-react';
+import { Clock, Pencil, Receipt, Receipt2, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
-import { BloodType, Case, BloodRequest, RequestType } from '@/services';
+import { BloodType, Case, BloodRequest, RequestType, User } from '@/services';
 import moment from 'moment';
+import {formatDateTime} from '@/helpers';
+import { useSelector } from 'react-redux';
 
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
+  const [toProceed, setToProceed] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   //for dropdowns items
   const [cases, setCases] = useState([]); 
   const [requestTypes, setRequestTypes] = useState([]); 
   const [bloodTypes, setBloodTypes] = useState([]); 
+  const [patients, setPatients] = useState([]); 
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
   //selected blood request
   const [bloodRequestId, setBloodRequestId] = useState(0);
   
+  const {authUser} = useSelector(state => state.users )
+
   const form = useForm({
     initialValues: {
       date_time: new Date(),
       user_id: '', 
       case_id: '',
-      organization_id: 5, //change this with user's org id
       request_type_id: '',
       blood_type_id: ''      
     },
@@ -58,6 +63,7 @@ const Requests = () => {
     BloodRequest.getSpecificBloodRequest(id).then((response) => {
       var bloodRequest = response.data.data[0];
       form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
+                      time: new Date(bloodRequest.attributes.date_time),
                       user_id: bloodRequest.attributes.user_id.toString(),
                       blood_type_id: bloodRequest.attributes.blood_type_id.toString(),
                       request_type_id: bloodRequest.attributes.request_type_id.toString(),
@@ -68,14 +74,26 @@ const Requests = () => {
   }    
 
   //table items
-  const getBloodRequests = () => {
-    BloodRequest.getBloodRequests().then((response) => {
+  const getOrgBloodRequests = (organization_id) => {
+    BloodRequest.getOrgAllBloodRequests(organization_id).then((response) => {
       setBloodRequests(response.data.data);    
     }).catch(err => console.log(err));
   };
 
   useEffect(() => {
-    getBloodRequests();
+    if (authUser)
+      getOrgBloodRequests(authUser.organization_id);
+  }, [authUser]);
+
+  //dropdown items
+  useEffect(() => {
+    const getPatients = () => {
+      User.getByRole(3).then((response) => {//Role ID 3 = patient
+        setPatients(response.data.data);    
+      }).catch(err => console.log(err));
+    };
+
+    getPatients();
   }, []);
 
   //dropdown items
@@ -112,8 +130,9 @@ const Requests = () => {
   }, []);
 
   const createBloodRequest = (payload) => {
-    BloodRequest.create({...payload, user_id: 11}).then((response) => {
-      getBloodRequests();
+    var final_date_time = formatDateTime(payload.date_time, payload.time);
+    BloodRequest.create({...payload, date_time: final_date_time, organization_id: authUser.organization_id}).then((response) => {
+      getOrgBloodRequests(authUser.organization_id);
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
     }).catch(err => console.log(err));    
@@ -121,12 +140,21 @@ const Requests = () => {
 
   const updateBloodRequest = (payload) => {
     BloodRequest.update(bloodRequestId, payload).then((response) => {
-      getBloodRequests();
+      getOrgBloodRequests(authUser.organization_id);
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
-      setIsEdit(false);
-      console.log(response.data.errors);
+      setIsEdit(false);      
     }).catch(err => console.log(err));    
+  }
+
+  const closeBloodRequest = (id) => {
+    BloodRequest.close(id).then((response) => {
+      getOrgBloodRequests(authUser.organization_id);      
+    }).catch(err => console.log(err));    
+  }
+
+  const deleteBloodRequest = (id) => {
+    
   }
 
   const rows = bloodRequests.map((element) => (
@@ -138,18 +166,28 @@ const Requests = () => {
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>
-        <Badge color='red' variant="filled">Pending</Badge>
+        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
+          {element.attributes.is_closed? 'Closed' : 'Pending'}
+        </Badge>
       </td>
       <td>
-        <Button leftIcon={<Pencil />} onClick={() => {
-          getSpecificBloodRequest(element.id);
-          setIsDrawerOpened(true);
-          setIsEdit(true);
-        }}>
+        <Button leftIcon={<Pencil />} 
+          disabled={element.attributes.is_closed}
+          onClick={() => {
+            getSpecificBloodRequest(element.id);
+            setIsDrawerOpened(true);
+            setIsEdit(true);          
+          }}>
           Edit
         </Button>
-        <Button ml={8} color='red' leftIcon={<Trash />} onClick={() => setIsDialogOpened(true)}>
+        <Button ml={8} color='red' leftIcon={<Trash />}
+          disabled={element.attributes.is_closed}
+          onClick={() => setIsDialogOpened(true)}>
           Delete
+        </Button>
+        <Button ml={8} color='gray' leftIcon={<Clock />}
+          onClick={() => closeBloodRequest(element.id)}>
+          {element.attributes.is_closed? 'Re-open' : 'Close'}
         </Button>
       </td>
     </tr>
@@ -172,22 +210,25 @@ const Requests = () => {
             <DatePicker 
               placeholder="Select date" 
               label="Event date" 
+              minDate={new Date()}
               required 
               {...form.getInputProps('date_time')}
             />
             <TimeInput 
               label="Pick time" 
               format="12" 
-              {...form.getInputProps('date_time')}
+              {...form.getInputProps('time')}
             />
             <Select
                 label="Patient Name"
                 placeholder="Select here"
                 {...form.getInputProps('user_id')}
-                data = {[{ value: '3', label: 'Erma Win' },
-                { value: '9', label: 'Prets' },
-                { value: '11', label: 'Elle' },
-              ]}
+                data = {patients.map(element => {
+                  let item = {};
+                  item["value"] = element.id;
+                  item["label"] = element.attributes.name;
+                  return item;
+                })}
                 searchable
               />
             <Select
@@ -233,6 +274,8 @@ const Requests = () => {
       <AlertDialog
         isToggled={isDialogOpened}
         setIsToggled={setIsDialogOpened}
+        toProceed={toProceed}
+        setToProceed={setToProceed}
         text='Would you like to delete?'
         type='delete'
       />
@@ -240,7 +283,7 @@ const Requests = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Tran. Code</th>
+              <th>Request Code</th>
               <th>Patient</th>
               <th>Blood Type</th>
               <th>Request Type</th>

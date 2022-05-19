@@ -21,6 +21,9 @@ import { Receipt } from "tabler-icons-react";
 import AlertDialog from "@/components/AlertDialog";
 import { BloodRequest, Appointment } from "@/services";
 import moment from "moment";
+import { useAuth } from '@/contexts/AuthProvider';
+import {formatDateTime} from '@/helpers';
+import { useSelector } from 'react-redux';
 
 const Requests = () => {
   const [opened, setOpened] = useState(false);
@@ -30,9 +33,12 @@ const Requests = () => {
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
   
+  const {authUser} = useSelector(state => state.users )
+
   const form = useForm({
     initialValues: {
       date_time: new Date(),
+      time: new Date(),
       user_id: '',
       blood_request_id: "",
     },
@@ -45,7 +51,7 @@ const Requests = () => {
 
   //table items
   const getBloodRequests = () => {
-    BloodRequest.getBloodRequestsPerBloodType(1)//get blood_type_id of the user who logged in (donor)
+    BloodRequest.getOpenBloodRequestsForDonor(authUser)//donor
       .then((response) => {
         setBloodRequests(response.data.data);
       })
@@ -57,6 +63,8 @@ const Requests = () => {
   }, []);
 
   const createAppointment = (payload) => {
+    var final_date_time = formatDateTime(payload.date_time, payload.time);
+    payload = {...payload, date_time: final_date_time}
     Appointment.create(payload)
       .then((response) => {
         getBloodRequests();
@@ -68,12 +76,13 @@ const Requests = () => {
 
   //for creation of appointment on modal
   const getSpecificBloodRequest = (id) => {
-    form.setValues({ date_time: new Date(), blood_request_id: id, user_id: 11 }); //change this with donor's id
+    form.setValues({ date_time: new Date(), blood_request_id: id, user_id: authUser.id }); //donor's id
   };
 
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.code}</td>
+      <td>{element.attributes.organization_name}</td>
       <td>{element.attributes.blood_type_name}</td>
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
@@ -81,8 +90,8 @@ const Requests = () => {
         {moment(element.attributes.date_time).format("MM/DD/YYYY hh:mm a")}
       </td>
       <td>
-        <Badge color="red" variant="filled">
-          Pending
+        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
+          {element.attributes.is_closed? 'Closed' : 'Pending'}
         </Badge>
       </td>
       <td>
@@ -113,13 +122,14 @@ const Requests = () => {
             <DatePicker
               placeholder="Select date"
               label="Event date"
+              minDate={new Date()}
               required
               {...form.getInputProps("date_time")}
             />
             <TimeInput
               label="Pick time"
               format="12"
-              {...form.getInputProps("date_time")}
+              {...form.getInputProps("time")}
             />
             <Anchor href="/appointments">
               <Button type="submit">Save</Button>
@@ -137,7 +147,8 @@ const Requests = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Tran. Code</th>
+              <th>Request Code</th>
+              <th>Organization</th>
               <th>Blood Type</th>
               <th>Request Type</th>
               <th>Case</th>

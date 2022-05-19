@@ -6,6 +6,7 @@ import { useForm } from '@mantine/form';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const Appointments = () => {
   const [opened, setOpened] = useState(false);
@@ -15,11 +16,13 @@ const Appointments = () => {
   const [donorAppointments, setDonorAppointments] = useState([]);
   //selected appointment
   const [appointmentId, setAppointmentId] = useState(0);
-
+  
+  const {authUser} = useSelector(state => state.users )
+  
   const form = useForm({
     initialValues: {
       date_time: new Date(),
-      user_id: 11, //change this with donor's id
+      //user_id: auth.user.id,
       blood_request_id: '',
     },
 
@@ -31,7 +34,7 @@ const Appointments = () => {
 
   //table items
   const getDonorAppointments = () => {
-    Appointment.getDonorAppointments(11).then((response) => { //change this with donor's id
+    Appointment.getDonorAllAppointments(authUser.id).then((response) => { //donor's id
       setDonorAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };
@@ -63,13 +66,14 @@ const Appointments = () => {
 
   const rows = donorAppointments.map((element) => (
     <tr key={element.id}>
-      <td>{element.attributes.donor_name}</td>
+      <td>{element.attributes.organization_name}</td>
       <td>{element.attributes.blood_type_name}</td>
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
+      <td>{element.attributes.blood_request_code}</td>
       <td>
-        <Badge color='red' variant="filled">Pending</Badge>
+        <Badge color={element.attributes.is_completed? 'green' : 'red'} variant="filled">{element.attributes.is_completed? 'Completed' : 'Pending'}</Badge>
       </td>
       <td>
         <Group>
@@ -117,11 +121,12 @@ const Appointments = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Donor</th>
+              <th>Organization</th>
               <th>Blood Type</th>
               <th>Request Type</th>
               <th>Case</th>
               <th>Schedule</th>
+              <th>Request Code</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
