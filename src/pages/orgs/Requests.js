@@ -153,9 +153,18 @@ const Requests = () => {
     }).catch(err => console.log(err));    
   }
 
-  const deleteBloodRequest = (id) => {
-    
+  const deleteBloodRequest = () => {
+    BloodRequest.delete(bloodRequestId).then((response) => {
+      if (response.data.status != 'Successful')
+        setErrors(response.data.errors);
+    }).catch(err => console.log(err));
+    setToProceed(false);
   }
+
+  useEffect(() => {   
+    if (toProceed)
+      deleteBloodRequest();
+  }, [toProceed]);
 
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
@@ -182,7 +191,10 @@ const Requests = () => {
         </Button>
         <Button ml={8} color='red' leftIcon={<Trash />}
           disabled={element.attributes.is_closed}
-          onClick={() => setIsDialogOpened(true)}>
+          onClick={() => {
+            setIsDialogOpened(true);
+            setBloodRequestId(element.id);
+          }}>
           Delete
         </Button>
         <Button ml={8} color='gray' leftIcon={<Clock />}
@@ -274,7 +286,6 @@ const Requests = () => {
       <AlertDialog
         isToggled={isDialogOpened}
         setIsToggled={setIsDialogOpened}
-        toProceed={toProceed}
         setToProceed={setToProceed}
         text='Would you like to delete?'
         type='delete'

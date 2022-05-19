@@ -42,6 +42,14 @@ const BloodRequest = {
 
     return await API.request(options);
   },
+  delete: async (id) => {
+    const options = {
+      method: 'DELETE',
+      url: `/blood_requests/${id}`,      
+    }    
+
+    return await API.request(options);
+  },
   close: async (id) => {
     const options = {
         method: 'PATCH',
