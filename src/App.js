@@ -5,15 +5,15 @@ import './styles/global.css';
 import Cookies from 'js-cookie';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import AdminOrganizations from '@/pages/admin/Organizations';
+
 import DonorsRequests from '@/pages/donors/Requests';
 import DonorsDonations from '@/pages/donors/Donations';
 import DonorsAppointments from '@/pages/donors/Appointments';
-import DonorsOrganizations from '@/pages/donors/Organizations';
 
 import OrgsRequests from '@/pages/orgs/Requests';
 import OrgsDonations from '@/pages/orgs/Donations';
 import OrgsAppointments from '@/pages/orgs/Appointments';
-import OrgsOrganizations from '@/pages/orgs/Organizations';
 import OrgsPatients from '@/pages/orgs/Patients';
 
 import Dashboard from '@/pages/Dashboard';
@@ -107,16 +107,7 @@ const App = () => {
                     <DonorsAppointments />
                   </RequireAuth>
                 )}
-              />
-              <Route
-                path="/organizations"
-                exact
-                element={(
-                  <RequireAuth>
-                    <DonorsOrganizations />
-                  </RequireAuth>
-                )}
-              />
+              />              
             </> :
             <>
               <Route
@@ -143,15 +134,6 @@ const App = () => {
                 element={(
                   <RequireAuth>
                     <OrgsAppointments />
-                  </RequireAuth>
-                )}
-              />
-              <Route
-                path="/organizations"
-                exact
-                element={(
-                  <RequireAuth>
-                    <OrgsOrganizations />
                   </RequireAuth>
                 )}
               />

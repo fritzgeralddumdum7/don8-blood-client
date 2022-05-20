@@ -26,6 +26,8 @@ const Alert = ({ isShow, setIsShow, text, type }) => {
           />
         </ThemeIcon>
       );
+    }else if (type == 'error'){
+
     }
   }
 
@@ -33,7 +35,11 @@ const Alert = ({ isShow, setIsShow, text, type }) => {
     success: {
       title: 'Success',
       icon: <Check size={18} />
-    }
+    },
+    error: {
+      title: 'Unsuccessful',
+      icon: <Trash size={18} />
+    },
   }
 
   return (

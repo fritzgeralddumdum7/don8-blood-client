@@ -57,6 +57,14 @@ const BloodRequest = {
     };
 
     return await API.request(options);
+  },
+  reOpen: async (id) => {
+    const options = {
+        method: 'PATCH',
+        url: `/blood_requests/${id}/reOpen`,        
+    };
+
+    return await API.request(options);
   }
 }
 
