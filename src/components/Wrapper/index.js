@@ -116,7 +116,7 @@ const Wrapper = ({ children }) => {
       items = DONOR_NAV_ITEMS;
     } else if (authUser?.role === 2) {
       items = ORGS_NAV_ITEMS;
-    } else {
+    } else if (authUser?.role === 4) {
       items = ADMIN_NAV_ITEMS;
     }
 

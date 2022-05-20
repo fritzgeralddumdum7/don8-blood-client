@@ -24,6 +24,7 @@ const Organizations = () => {
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
+  const [organizationId, setOrganizationId] = useState(0);
   //for dropdowns items
   const [organizationTypes, setOrganizationTypes] = useState([]); 
   const [cityMunicipalities, setCityMunicipalities] = useState([]); 
@@ -46,23 +47,29 @@ const Organizations = () => {
     },
   });
 
-  useEffect(() => {
-    const getOrganizations = () => {
-      Organization.getOrganizations().then((response) => {
-        setOrganizations(response.data.data);
-      }).catch(err => console.log(err));      
-    };
+  //table items
+  const getOrganizations = () => {
+    Organization.getOrganizations().then((response) => {
+      setOrganizations(response.data.data);
+    }).catch(err => console.log(err));      
+  };
 
+  useEffect(() => {
     getOrganizations();
   }, []);
 
   const rows = organizations.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.name}</td>
+      <td>{element.attributes.city_municipality_name}</td>
+      <td>{element.attributes.province_name}</td>
       <td>{element.attributes.organization_type_name}</td>      
       <td>
-        <Button leftIcon={<Pencil />} onClick={() => {
-          setIsEdit(true);
+        <Button leftIcon={<Pencil />}
+          onClick={() => {
+            getSpecificOrganization(element.id);
+            setIsDrawerOpened(true);
+            setIsEdit(true);          
         }}>
           Edit
         </Button>
@@ -75,14 +82,14 @@ const Organizations = () => {
 
   //for edit on modal   
   const getSpecificOrganization = (id) => {
+    setOrganizationId(id);
     Organization.getSpecificOrganization(id).then((response) => {
-      form.setValues({name: response.data.data[0].attributes.name,
-                      address: response.data.data[0].attributes.address,
-                      city_municipality_id: response.data.data[0].attributes.city_municipality_id,
-                      organization_type_id: response.data.data[0].attributes.organization_type_id});
-                         
-      setErrors(response.data.errors);      
-      console.log(form.values);
+      const organization = response.data.data[0]; 
+      form.setValues({name: organization.attributes.name,
+                      address: organization.attributes.address,
+                      city_municipality_id: organization.attributes.city_municipality_id.toString(),
+                      organization_type_id: organization.attributes.organization_type_id.toString()});                         
+      setErrors(response.data.errors);            
     }).catch(err => console.log(err));    
   }    
 
@@ -115,6 +122,16 @@ const Organizations = () => {
     }).catch(err => console.log(err));    
   }
 
+  const updateOrganization = (payload) => {
+    Organization.update(organizationId, payload).then((response) => {
+      getOrganizations();
+      setErrors(response.data.errors);
+      setIsDrawerOpened(false);      
+      setIsEdit(false);
+      form.reset();
+    }).catch(err => console.log(err));    
+  }
+
   return (
     <Wrapper>
       <Drawer
@@ -127,7 +144,7 @@ const Organizations = () => {
           title: { fontWeight: 'bold' }
         })}
       >
-        <form onSubmit={form.onSubmit((values) => createOrganization(values))}>
+        <form onSubmit={form.onSubmit((values) => isEdit? updateOrganization(values) : createOrganization(values))}>
           <Stack>
             <TextInput
               label="Name"
@@ -178,6 +195,8 @@ const Organizations = () => {
           <thead>
             <tr>
               <th>Name</th>
+              <th>City/Municipality</th>
+              <th>Province</th>
               <th>Type</th>
               <th>Actions</th>
             </tr>

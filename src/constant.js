@@ -18,11 +18,6 @@ export const DONOR_NAV_ITEMS = [
     href: '/requests'
   },
   {
-    text: 'Donations',
-    Component: HeartHandshake,
-    href: '/donations'
-  },
-  {
     text: 'Appointments',
     Component: Notes,
     href: '/appointments'
@@ -46,11 +41,6 @@ export const ORGS_NAV_ITEMS = [
     href: '/requests'
   },
   {
-    text: 'Donations',
-    Component: HeartHandshake,
-    href: '/donations'
-  },
-  {
     text: 'Appointments',
     Component: Notes,
     href: '/appointments'
@@ -59,7 +49,33 @@ export const ORGS_NAV_ITEMS = [
     text: 'Patients',
     Component: Users,
     href: '/patients'
+  },
+  {
+    text: 'Donors',
+    Component: HeartHandshake,
+    href: '/donors'
   }
 ]
 
-export const ADMIN_NAV_ITEMS = []
+export const ADMIN_NAV_ITEMS = [
+  {
+    text: 'Dashboard',
+    Component: LayoutDashboard,
+    href: '/'
+  },
+  {
+    text: 'Organizations',
+    Component: Users,
+    href: '/organizations'
+  },
+  {
+    text: 'Patients',
+    Component: Users,
+    href: '/patients'
+  },
+  {
+    text: 'Donors',
+    Component: Users,
+    href: '/donors'
+  },
+]

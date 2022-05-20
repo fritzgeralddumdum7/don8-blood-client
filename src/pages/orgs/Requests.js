@@ -65,7 +65,7 @@ const Requests = () => {
   const getSpecificBloodRequest = (id) => {
     setBloodRequestId(id);
     BloodRequest.getSpecificBloodRequest(id).then((response) => {
-      var bloodRequest = response.data.data[0];
+      const bloodRequest = response.data.data[0];
       form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
                       time: new Date(bloodRequest.attributes.date_time),
                       user_id: bloodRequest.attributes.user_id.toString(),

@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import AdminOrganizations from '@/pages/admin/Organizations';
+import AdminPatients from '@/pages/admin/Patients';
+import AdminDonors from '@/pages/admin/Donors';
 
 import DonorsRequests from '@/pages/donors/Requests';
 import DonorsDonations from '@/pages/donors/Donations';
@@ -15,6 +17,7 @@ import OrgsRequests from '@/pages/orgs/Requests';
 import OrgsDonations from '@/pages/orgs/Donations';
 import OrgsAppointments from '@/pages/orgs/Appointments';
 import OrgsPatients from '@/pages/orgs/Patients';
+import OrgsDonors from '@/pages/orgs/Donors';
 
 import Dashboard from '@/pages/Dashboard';
 import Home from '@/pages/Home';
@@ -79,7 +82,7 @@ const App = () => {
           </RequireAuth>
         )} />
         {
-          authUser?.role === 1 ?
+          authUser?.role === 1 ? //Donor
             <>
               <Route
                 path="/requests"
@@ -109,6 +112,7 @@ const App = () => {
                 )}
               />              
             </> :
+            authUser?.role === 2 ? //Org member
             <>
               <Route
                 path="/requests"
@@ -143,6 +147,45 @@ const App = () => {
                 element={(
                   <RequireAuth>
                     <OrgsPatients />
+                  </RequireAuth>
+                )}
+              />
+              <Route
+                path="/donors"
+                exact
+                element={(
+                  <RequireAuth>
+                    <OrgsDonors />
+                  </RequireAuth>
+                )}
+              />
+            </>
+            : //Admin
+            <>             
+              <Route
+                path="/patients"
+                exact
+                element={(
+                  <RequireAuth>
+                    <AdminPatients />
+                  </RequireAuth>
+                )}
+              />
+              <Route
+                path="/donors"
+                exact
+                element={(
+                  <RequireAuth>
+                    <AdminDonors />
+                  </RequireAuth>
+                )}
+              />
+              <Route
+                path="/organizations"
+                exact
+                element={(
+                  <RequireAuth>
+                    <AdminOrganizations />
                   </RequireAuth>
                 )}
               />
