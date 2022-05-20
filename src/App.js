@@ -22,18 +22,18 @@ import Login from '@/pages/Login';
 import ResetPassword from '@/pages/ResetPassword';
 import SignUp from '@/pages/SignUp';
 import RequireAuth from '@/contexts/RequireAuth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchBloodTypes } from '@/redux/bloodTypes';
 import { fetchProvinces } from '@/redux/provinces';
 import { fetchOrgTypes, fetchOrgs } from '@/redux/orgs';
 
 const App = () => {
-  const [authUser, setAuthUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isMounted, setIsMounted] = useState(false);
+  const { authUser } = useSelector(state => state.users);
 
   const redirectPath = location.pathname || '/';
 
@@ -44,10 +44,9 @@ const App = () => {
   ];
 
   useEffect(() => {
-    const auth = Cookies.get('don8_blood');
+    const auth = Cookies.get('avion_access_token');
     if (auth && !UNAUTH_ROUTES.includes(redirectPath)) {
       navigate(redirectPath, { replace: true });
-      setAuthUser(JSON.parse(auth).user);
     } else {
       if (auth) {
         return navigate('/', { replace: true });
@@ -67,7 +66,7 @@ const App = () => {
   }, [isMounted]);
 
   return (
-    <AuthProvider authUser={authUser}>
+    <AuthProvider>
       <Routes>
         <Route path="/login" exact element={<Login />} />
         <Route path="/home" exact element={<Home />} />

@@ -40,8 +40,8 @@ const Login = () => {
       <form onSubmit={form.onSubmit((values) => {
         User.login({ user: values })
           .then(res => {
-            API.defaults.headers.Authorization = res.headers.authorization
-            auth.login(res.data, res.headers.authorization);
+            API.defaults.headers.Authorization = res.headers.authorization;
+            auth.login(res.headers.authorization);
             navigate(redirectPath, { replace: true });
           }).catch(error => {
             const res = error.response.data;

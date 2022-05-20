@@ -50,7 +50,7 @@ const SignUp = () => {
   useEffect(() => {
     if (isFinal) {
       setVisible(true);
-      User.register({ user: userInfo })
+      User.upsert({ user: userInfo })
         .then(() => {
           navigate('/login');
         })

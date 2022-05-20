@@ -54,7 +54,7 @@ const SecondStep = ({ nextStepHandler, prevStepHandler, setUserInfoHandler, user
               label="Middle Name"
               placeholder='Optional'
               size='lg'
-              {...form.getInputProps('middleName')}
+              {...form.getInputProps('middlename')}
             />
             <DatePicker
               label="Birthday"
