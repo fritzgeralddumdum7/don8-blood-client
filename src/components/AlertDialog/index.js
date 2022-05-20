@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { Trash, Check } from 'tabler-icons-react';
 
-const AlertDialog = ({ isToggled, setIsToggled, text, type }) => {
+const AlertDialog = ({ isToggled, setIsToggled, text, type, setToProceed }) => {
   const [isNotifOpened, setIsNotifOpened] = useState(false);
 
   const renderIcon = () => {
@@ -58,10 +58,15 @@ const AlertDialog = ({ isToggled, setIsToggled, text, type }) => {
           </Center>
           <Title align='center' order={3} my={10}>{text}</Title>
           <Group position='center'>
-            <Button color='red' onClick={() => setIsToggled(false)}>Cancel</Button>
+            <Button color='red'
+              onClick={() => {
+                setIsToggled(false);
+                setToProceed(false);
+            }}>Cancel</Button>
             <Button onClick={() => {
               setIsToggled(false);
               setIsNotifOpened(true);
+              setToProceed(true);
             }}>Continue</Button>
           </Group>
         </Stack>

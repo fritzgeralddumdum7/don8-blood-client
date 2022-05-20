@@ -1,6 +1,14 @@
 import API from './base';
 
 const BloodRequest = {
+  getOrgAllBloodRequests: async (organization_id) => {
+    const options = {
+      method: 'GET',
+      url: '/blood_requests',
+      params: {organization_id}
+    }
+    return await API.request(options);
+  },
   getSpecificBloodRequest: async (id) => {
     const options = {
       method: 'GET',
@@ -8,17 +16,11 @@ const BloodRequest = {
     }
     return await API.request(options);
   },
-  getBloodRequests: async () => {
+  getOpenBloodRequestsForDonor: async (authuser) => {
     const options = {
       method: 'GET',
-      url: '/blood_requests'
-    }
-    return await API.request(options);
-  },
-  getBloodRequestsPerBloodType: async (blood_type_id) => {
-    const options = {
-      method: 'GET',
-      url: `/blood_requests?blood_type_id=${blood_type_id}`
+      url: `/blood_requests`,
+      params: {blood_type_id: authuser.blood_type_id, user_id: authuser.id}
     }
     return await API.request(options);
   },
@@ -36,6 +38,22 @@ const BloodRequest = {
         method: 'PATCH',
         url: `/blood_requests/${id}`,
         data: payload,
+    };
+
+    return await API.request(options);
+  },
+  delete: async (id) => {
+    const options = {
+      method: 'DELETE',
+      url: `/blood_requests/${id}`,      
+    }    
+
+    return await API.request(options);
+  },
+  close: async (id) => {
+    const options = {
+        method: 'PATCH',
+        url: `/blood_requests/${id}/close`,        
     };
 
     return await API.request(options);

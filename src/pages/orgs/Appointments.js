@@ -5,6 +5,7 @@ import { DatePicker, TimeInput } from '@mantine/dates';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const Appointments = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -15,19 +16,29 @@ const Appointments = () => {
   const [valueTime, setValueTime] = useState(new Date());
   //for table items
   const [orgAppointments, setOrgAppointments] = useState([]);
+  
+  const {authUser} = useSelector(state => state.users )
 
-  const getOrgAppointments = () => {
-    Appointment.getAppointments().then((response) => {
+  const getOrgAppointments = (organization_id) => {
+    Appointment.getOrgAllAppointments(organization_id).then((response) => {
       setOrgAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };
 
   useEffect(() => {
-    getOrgAppointments();
-  }, []);
+    if (authUser)
+      getOrgAppointments(authUser.organization_id);
+  }, [authUser]);
 
   const updateAppointment = () =>{
      
+  }
+
+  const completeAppointment = (id) => {
+    Appointment.complete(id).then((response) => {
+      getOrgAppointments(authUser.organization_id);      
+      console.log(response.data.errors);
+    }).catch(err => console.log(err));    
   }
 
   const rows = orgAppointments.map((element) => (
@@ -38,12 +49,14 @@ const Appointments = () => {
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>
-        <Badge color='red' variant="filled">Pending</Badge>
+        <Badge color={element.attributes.is_completed? 'green' : 'red' } variant="filled">
+          {element.attributes.is_completed? 'Completed' : 'Pending'}
+        </Badge>
       </td>
       <td>
         <Group>
-          <Button leftIcon={<Receipt />}>
-            Verify
+          <Button leftIcon={<Receipt />} onClick={() => completeAppointment(element.id)}>
+            Complete
           </Button>
           <Button leftIcon={<Receipt />} color='red'>
             Cancel
