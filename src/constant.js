@@ -10,27 +10,27 @@ export const DONOR_NAV_ITEMS = [
   {
     text: 'Dashboard',
     Component: LayoutDashboard,
-    href: '/'
+    href: ['/']
   },
   {
     text: 'Requests',
     Component: Mail,
-    href: '/requests'
+    href: ['/requests']
   },
   {
     text: 'Donations',
     Component: HeartHandshake,
-    href: '/donations'
+    href: ['/donations']
   },
   {
     text: 'Appointments',
     Component: Notes,
-    href: '/appointments'
+    href: ['/appointments']
   },
   {
     text: 'Organizations',
     Component: Notes,
-    href: '/organizations'
+    href: ['/organizations']
   }
 ]
 
@@ -38,28 +38,43 @@ export const ORGS_NAV_ITEMS = [
   {
     text: 'Dashboard',
     Component: LayoutDashboard,
-    href: '/'
+    href: ['/']
   },
   {
     text: 'Requests',
     Component: Mail,
-    href: '/requests'
+    href: ['/requests']
   },
   {
     text: 'Donations',
     Component: HeartHandshake,
-    href: '/donations'
+    href: ['/donations']
   },
   {
     text: 'Appointments',
     Component: Notes,
-    href: '/appointments'
+    href: ['/appointments']
   },
   {
     text: 'Patients',
     Component: Users,
-    href: '/patients'
+    href: ['/patients']
   }
 ]
 
 export const ADMIN_NAV_ITEMS = []
+
+export const ROLES = [
+  {
+    value: '1',
+    label: 'Donor'
+  },
+  {
+    value: '2',
+    label: 'Organization Member'
+  },
+  {
+    value: '3',
+    label: 'Patient'
+  }
+]

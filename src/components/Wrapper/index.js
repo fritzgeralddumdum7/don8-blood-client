@@ -26,7 +26,7 @@ import {
 import { DONOR_NAV_ITEMS, ORGS_NAV_ITEMS, ADMIN_NAV_ITEMS } from '@/constant';
 import { Pencil, Power, Mail, Lock } from 'tabler-icons-react';
 import { useAuth } from '@/contexts/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from '@mantine/form';
 import { DatePicker } from '@mantine/dates';
 import { useSelector, useDispatch } from 'react-redux';
@@ -56,6 +56,7 @@ const Wrapper = ({ children }) => {
   const [debounced] = useDebouncedValue(currentPassword, 1000, { leading: true });
   const [currentPasswordError, setCurrentPasswordError] = useState({});
   const [isTypingPassword, setIsTypingPassword] = useState(false);
+  const location = useLocation();
 
   const form = useForm({
     initialValues: {
@@ -131,10 +132,17 @@ const Wrapper = ({ children }) => {
           }
         })}>
           <Navbar.Section>
-            <Group>
-              <ThemeIcon variant='outline' size='lg'>
-                <Component size={20} />
-              </ThemeIcon>
+            <Group
+              spacing={!href.includes(location.pathname) && 24}
+              ml={!href.includes(location.pathname) && 7}
+            >
+              {
+                href.includes(location.pathname) ?
+                  <ThemeIcon size='lg'>
+                    <Component size={18} />
+                  </ThemeIcon> :
+                  <Component size={18} />
+              }
               <Text>{text}</Text>
             </Group>
           </Navbar.Section>

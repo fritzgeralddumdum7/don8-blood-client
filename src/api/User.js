@@ -62,6 +62,13 @@ const Organization = {
 			params: {role}
 		}
 		return await API.request(options);
+	},
+	dashboard: async (role) => {
+		const options = {
+			method: 'GET',
+			url: '/users/dashboard'
+		}
+		return await API.request(options);
 	}
 }
 

@@ -27,12 +27,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBloodTypes } from '@/redux/bloodTypes';
 import { fetchProvinces } from '@/redux/provinces';
 import { fetchOrgTypes, fetchOrgs } from '@/redux/orgs';
+import API from '@/api/base';
+import { LoadingOverlay } from '@mantine/core';
 
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { authUser } = useSelector(state => state.users);
 
   const redirectPath = location.pathname || '/';
@@ -65,108 +68,127 @@ const App = () => {
     }
   }, [isMounted]);
 
+  let pendingRequests = 0;
+
+  API.interceptors.request.use(request => {
+    pendingRequests++;
+    return request;
+  }, null, { synchronous: true });
+
+  API.interceptors.response.use(response => {
+    pendingRequests--;
+
+    if (pendingRequests <= 0) {
+      setIsLoading(false);
+    }
+    return response;
+  });
+
   return (
     <AuthProvider>
-      <Routes>
-        <Route path="/login" exact element={<Login />} />
-        <Route path="/home" exact element={<Home />} />
-        <Route path="/reset-password" exact element={<ResetPassword />} />
-        <Route path="/sign-up" exact element={<SignUp />} />
+      {
+        isLoading ? <LoadingOverlay visible={isLoading} /> :
+          <Routes>
+            <Route path="/login" exact element={<Login />} />
+            <Route path="/home" exact element={<Home />} />
+            <Route path="/reset-password" exact element={<ResetPassword />} />
+            <Route path="/sign-up" exact element={<SignUp />} />
 
-        <Route path="/" element={(
-          <RequireAuth>
-            <Dashboard />
-          </RequireAuth>
-        )} />
-        {
-          authUser?.role === 1 ?
-            <>
-              <Route
-                path="/requests"
-                exact
-                element={(
-                  <RequireAuth>
-                    <DonorsRequests />
-                  </RequireAuth>
-                )}
-              />
-              <Route
-                path="/donations"
-                exact
-                element={(
-                  <RequireAuth>
-                    <DonorsDonations />
-                  </RequireAuth>
-                )} 
-              />
-              <Route
-                path="/appointments"
-                exact
-                element={(
-                  <RequireAuth>
-                    <DonorsAppointments />
-                  </RequireAuth>
-                )}
-              />
-              <Route
-                path="/organizations"
-                exact
-                element={(
-                  <RequireAuth>
-                    <DonorsOrganizations />
-                  </RequireAuth>
-                )}
-              />
-            </> :
-            <>
-              <Route
-                path="/requests"
-                exact
-                element={(
-                  <RequireAuth>
-                    <OrgsRequests />
-                  </RequireAuth>
-                )}
-              />
-              <Route
-                path="/donations"
-                exact
-                element={(
-                  <RequireAuth>
-                    <OrgsDonations />
-                  </RequireAuth>
-                )} 
-              />
-              <Route
-                path="/appointments"
-                exact
-                element={(
-                  <RequireAuth>
-                    <OrgsAppointments />
-                  </RequireAuth>
-                )}
-              />
-              <Route
-                path="/organizations"
-                exact
-                element={(
-                  <RequireAuth>
-                    <OrgsOrganizations />
-                  </RequireAuth>
-                )}
-              />
-              <Route
-                path="/patients"
-                exact
-                element={(
-                  <RequireAuth>
-                    <OrgsPatients />
-                  </RequireAuth>
-                )}
-              />
-            </>
-        }
-      </Routes>
+            <Route path="/" element={(
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            )} />
+            {
+              authUser?.role === 1 ?
+                <>
+                  <Route
+                    path="/requests"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <DonorsRequests />
+                      </RequireAuth>
+                    )}
+                  />
+                  <Route
+                    path="/donations"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <DonorsDonations />
+                      </RequireAuth>
+                    )}
+                  />
+                  <Route
+                    path="/appointments"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <DonorsAppointments />
+                      </RequireAuth>
+                    )}
+                  />
+                  <Route
+                    path="/organizations"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <DonorsOrganizations />
+                      </RequireAuth>
+                    )}
+                  />
+                </> :
+                <>
+                  <Route
+                    path="/requests"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <OrgsRequests />
+                      </RequireAuth>
+                    )}
+                  />
+                  <Route
+                    path="/donations"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <OrgsDonations />
+                      </RequireAuth>
+                    )}
+                  />
+                  <Route
+                    path="/appointments"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <OrgsAppointments />
+                      </RequireAuth>
+                    )}
+                  />
+                  <Route
+                    path="/organizations"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <OrgsOrganizations />
+                      </RequireAuth>
+                    )}
+                  />
+                  <Route
+                    path="/patients"
+                    exact
+                    element={(
+                      <RequireAuth>
+                        <OrgsPatients />
+                      </RequireAuth>
+                    )}
+                  />
+                </>
+            }
+          </Routes>
+      }
     </AuthProvider>
   );
 }
