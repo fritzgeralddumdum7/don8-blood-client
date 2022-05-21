@@ -40,7 +40,7 @@ const Patients = () => {
         <Table striped highlightOnHover>
           <thead>
             <tr>
-              <th>Patient Name</th>
+              <th>Patient</th>
               <th>Blood Type</th>
               <th>Blood Request Type</th>
               <th>Category</th>

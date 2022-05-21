@@ -63,6 +63,13 @@ const Appointment = {
     };
     return await API.request(options);
   },
+  cancel: async (id) => {
+    const options = {
+        method: 'PATCH',
+        url: `/appointments/${id}/cancel`,
+    };
+    return await API.request(options);
+  },
 }
 
 export default Appointment;

@@ -17,6 +17,7 @@ import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Clock, Pencil, Receipt, Receipt2, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
+import Alert from '@/components/AlertDialog';
 import { BloodType, Case, BloodRequest, RequestType, User } from '@/services';
 import moment from 'moment';
 import {formatDateTime} from '@/helpers';
@@ -28,6 +29,9 @@ const Requests = () => {
   const [toProceed, setToProceed] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isShowAlert, setIsShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [transactionType, setTransactionType] = useState('');
   //for dropdowns items
   const [cases, setCases] = useState([]); 
   const [requestTypes, setRequestTypes] = useState([]); 
@@ -74,15 +78,15 @@ const Requests = () => {
   }    
 
   //table items
-  const getOrgBloodRequests = (organization_id) => {
-    BloodRequest.getOrgAllBloodRequests(organization_id).then((response) => {
+  const getOrgBloodRequests = () => {
+    BloodRequest.getOrgAllBloodRequests(authUser.organization_id).then((response) => {
       setBloodRequests(response.data.data);    
     }).catch(err => console.log(err));
   };
 
   useEffect(() => {
     if (authUser)
-      getOrgBloodRequests(authUser.organization_id);
+      getOrgBloodRequests();
   }, [authUser]);
 
   //dropdown items
@@ -132,38 +136,57 @@ const Requests = () => {
   const createBloodRequest = (payload) => {
     var final_date_time = formatDateTime(payload.date_time, payload.time);
     BloodRequest.create({...payload, date_time: final_date_time, organization_id: authUser.organization_id}).then((response) => {
-      getOrgBloodRequests(authUser.organization_id);
+      getOrgBloodRequests();
       setErrors(response.data.errors);
-      setIsDrawerOpened(false);      
+      setIsDrawerOpened(false);  
+      form.reset();    
     }).catch(err => console.log(err));    
   }
 
   const updateBloodRequest = (payload) => {
-    BloodRequest.update(bloodRequestId, payload).then((response) => {
-      getOrgBloodRequests(authUser.organization_id);
+    var final_date_time = formatDateTime(payload.date_time, payload.time);
+    BloodRequest.update(bloodRequestId, {...payload, date_time: final_date_time }).then((response) => {
+      getOrgBloodRequests();
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
       setIsEdit(false);      
+      form.reset();
     }).catch(err => console.log(err));    
   }
 
-  const closeBloodRequest = (id) => {
-    BloodRequest.close(id).then((response) => {
+  const closeBloodRequest = () => {
+    BloodRequest.close(bloodRequestId).then((response) => {
       getOrgBloodRequests(authUser.organization_id);      
     }).catch(err => console.log(err));    
+    setToProceed(false);//reset
+  }
+
+  const reOpenBloodRequest = () => {
+    BloodRequest.reOpen(bloodRequestId).then((response) => {
+      getOrgBloodRequests();      
+    }).catch(err => console.log(err));    
+    setToProceed(false);//reset
   }
 
   const deleteBloodRequest = () => {
     BloodRequest.delete(bloodRequestId).then((response) => {
-      if (response.data.status != 'Successful')
+      if (response.data.status === 'Successful')
+        getOrgBloodRequests();
+      else{
         setErrors(response.data.errors);
+        setAlertMsg("Error");        
+      }
     }).catch(err => console.log(err));
-    setToProceed(false);
+    setToProceed(false);//reset
   }
 
   useEffect(() => {   
-    if (toProceed)
+    if (toProceed && transactionType === 'delete')
       deleteBloodRequest();
+    else if (toProceed && transactionType === 'close')
+      closeBloodRequest();
+    else if (toProceed && transactionType === 'reOpen')
+      reOpenBloodRequest();
   }, [toProceed]);
 
   const rows = bloodRequests.map((element) => (
@@ -194,11 +217,18 @@ const Requests = () => {
           onClick={() => {
             setIsDialogOpened(true);
             setBloodRequestId(element.id);
+            setTransactionType('delete');
+            setAlertMsg('Delete request?')
           }}>
           Delete
         </Button>
         <Button ml={8} color='gray' leftIcon={<Clock />}
-          onClick={() => closeBloodRequest(element.id)}>
+          onClick={() => {
+            setIsDialogOpened(true);
+            setBloodRequestId(element.id);
+            setTransactionType(element.attributes.is_closed? 'reOpen' : 'close');
+            setAlertMsg(element.attributes.is_closed? 'Re-open request?' : 'Close request?')
+        }}>
           {element.attributes.is_closed? 'Re-open' : 'Close'}
         </Button>
       </td>
@@ -283,12 +313,18 @@ const Requests = () => {
           </Stack>
         </form>        
       </Drawer>
+      <Alert
+        isShow={isShowAlert}
+        setIsShow={setIsShowAlert}
+        type='error'
+        text={alertMsg}
+      />
       <AlertDialog
         isToggled={isDialogOpened}
         setIsToggled={setIsDialogOpened}
         setToProceed={setToProceed}
-        text='Would you like to delete?'
-        type='delete'
+        text={alertMsg}
+        type={transactionType}
       />
       <Card shadow="sm" mt='sm'>
         <Table striped highlightOnHover>
