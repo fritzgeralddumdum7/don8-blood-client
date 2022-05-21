@@ -1,17 +1,10 @@
 import { useState, useEffect } from "react";
 import Wrapper from "@/components/Wrapper";
 import {
-  Table,
   Card,
   Badge,
   Button,
   Stack,
-  TextInput,
-  Select,
-  Group,
-  Drawer,
-  Text,
-  ListItem,
   Modal,
   Anchor,
 } from "@mantine/core";
@@ -23,6 +16,7 @@ import { BloodRequest, Appointment } from "@/services";
 import moment from "moment";
 import {formatDateTime} from '@/helpers';
 import { useSelector } from 'react-redux';
+import Table from "@/components/Table";
 
 const Requests = () => {
   const [opened, setOpened] = useState(false);
@@ -83,6 +77,17 @@ const Requests = () => {
     })
     .catch((err) => console.log(err));
   }
+
+  const COLUMNS = [
+    'Request Code',
+    'Organization',
+    'Blood Type',
+    'Request Type',
+    'Case',
+    'Schedule',
+    'Status',
+    'Actions'
+  ];
 
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
@@ -148,23 +153,9 @@ const Requests = () => {
         text="Would you like to delete?"
         type="delete"
       />
-      <Card shadow="sm" mt="sm">
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Request Code</th>
-              <th>Organization</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Table columns={COLUMNS} rows={bloodRequests}>
+        <tbody>{rows}</tbody>
+      </Table>
     </Wrapper>
   );
 };

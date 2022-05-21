@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
-import { Table, Card, Badge, Button, Group, Drawer, Stack, Modal } from '@mantine/core';
+import { Badge, Button, Group, Stack, Modal } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Receipt } from 'tabler-icons-react';
@@ -8,7 +8,8 @@ import { Appointment } from '@/services';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
-import {formatDateTime} from '@/helpers';
+import { formatDateTime } from '@/helpers';
+import Table from "@/components/Table";
 
 const Appointments = () => {
   const [opened, setOpened] = useState(false);
@@ -22,8 +23,18 @@ const Appointments = () => {
   const [donorAppointments, setDonorAppointments] = useState([]);
   //selected appointment
   const [appointmentId, setAppointmentId] = useState(0);
-  
-  const {authUser} = useSelector(state => state.users )
+  const { authUser } = useSelector(state => state.users);
+
+  const COLUMNS = [
+    'Organization',
+    'Blood Type',
+    'Request Type',
+    'Case',
+    'Schedule',
+    'Request Code',
+    'Status',
+    'Actions'
+  ];
   
   const form = useForm({
     initialValues: {
@@ -154,23 +165,9 @@ const Appointments = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Card shadow="sm" mt="sm">
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Organization</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Request Code</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Table columns={COLUMNS} rows={donorAppointments}>
+        <tbody>{rows}</tbody>
+      </Table>
     </Wrapper>
   );
 }

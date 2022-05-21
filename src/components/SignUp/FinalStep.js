@@ -8,6 +8,7 @@ import {
 import FooterAction from '@/components/SignUp/FooterAction';
 import { useForm } from '@mantine/form';
 import { useSelector } from 'react-redux';
+import { ROLES } from '@/constant';
 
 const FinalStep = ({ role, setRole, nextStepHandler, prevStepHandler, setUserInfoHandler, userInfo, setIsFinal }) => {
   const { bloodTypes } = useSelector(state => state.bloodTypes);
@@ -23,10 +24,10 @@ const FinalStep = ({ role, setRole, nextStepHandler, prevStepHandler, setUserInf
   }
   const form = useForm({
     initialValues: userInfo,
-    validate: role === '1' ? donorValidations : orgValidations,
+    validate: ['1', '3'].includes(role) ? donorValidations : orgValidations,
   });
   const renderRoleFields = () => {
-    if (role === '1') {
+    if (['1', '3'].includes(role)) {
       return (
         <Select
           label="Blood Type"
@@ -76,10 +77,7 @@ const FinalStep = ({ role, setRole, nextStepHandler, prevStepHandler, setUserInf
               label="Role"
               placeholder="Select a role"
               size='lg'
-              data={[
-                { value: '1', label: 'Donor' },
-                { value: '2', label: 'Organization Member' },
-              ]}
+              data={ROLES}
               searchable
               onChange={(event) => {
                 form.setFieldValue('role', null);
