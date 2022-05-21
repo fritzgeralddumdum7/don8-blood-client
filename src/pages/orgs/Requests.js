@@ -6,12 +6,9 @@ import {
   Badge,
   Button,
   Stack,
-  TextInput,
   Select,
   Group,
-  Drawer,
-  Text,
-  ListItem
+  Drawer  
 } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
@@ -22,6 +19,7 @@ import { BloodType, Case, BloodRequest, RequestType, User } from '@/services';
 import moment from 'moment';
 import {formatDateTime} from '@/helpers';
 import { useSelector } from 'react-redux';
+import { APPOINTMENT_SCHEDS } from '@/constant';
 
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -256,11 +254,16 @@ const Requests = () => {
               required 
               {...form.getInputProps('date_time')}
             />
-            <TimeInput 
+            {/* <TimeInput 
               label="Pick time" 
               format="12" 
               {...form.getInputProps('time')}
-            />
+            /> */}
+            <Select
+              placeholder="Select here"
+              {...form.getInputProps('time')}
+              data = {APPOINTMENT_SCHEDS}>
+            </Select>
             <Select
                 label="Patient Name"
                 placeholder="Select here"
