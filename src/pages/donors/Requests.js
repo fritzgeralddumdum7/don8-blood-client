@@ -10,11 +10,12 @@ import {
   Group,
   Text,
   TextInput,
-  Table
-  
+  Table,
+  Select  
 } from "@mantine/core";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { useDebouncedValue } from '@mantine/hooks';
 import { Receipt } from "tabler-icons-react";
 import AlertDialog from "@/components/AlertDialog";
 import { BloodRequest, Appointment } from "@/services";
@@ -30,9 +31,9 @@ const Requests = () => {
   const [errors, setErrors] = useState({});
   const [minSchedDate, setMinSchedDate] = useState(new Date());
   const [searchValue, setSearchValue] = useState('');
+  const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
-  
   const {authUser} = useSelector(state => state.users )
 
   const form = useForm({
@@ -44,7 +45,8 @@ const Requests = () => {
     },
 
     validate: {
-      date_time: (value) => (value ? null : "No schedule"),
+      date_time: (value) => (value ? null : "No selected date"),
+      time: (value) => (value ? null : "No selected time"),
       blood_request_id: (value) => (value ? null : "No selected request"),
     },
   });
@@ -59,9 +61,19 @@ const Requests = () => {
         .catch((err) => console.log(err));
   };
 
+  //First load
   useEffect(() => {
     getBloodRequests();
   }, []);
+
+  useEffect(() => {
+    if (debounced){
+      BloodRequest.getOpenBloodRequestsForDonor(debounced).then((response) => {
+        setBloodRequests(response.data.data);
+      })
+      .catch((err) => console.log(err));
+    }    
+  }, [debounced])
 
   const createAppointment = (payload) => {
     var final_date_time = formatDateTime(payload.date_time, payload.time);
@@ -96,36 +108,6 @@ const Requests = () => {
     'Actions'
   ];
 
-  const rows = bloodRequests.map((element) => (
-    <tr key={element.id}>
-      <td>{element.attributes.code}</td>
-      <td>{element.attributes.organization_name}</td>
-      <td>{element.attributes.blood_type_name}</td>
-      <td>{element.attributes.request_type_name}</td>
-      <td>{element.attributes.case_name}</td>
-      <td>
-        {moment(element.attributes.date_time).format("MM/DD/YYYY hh:mm a")}
-      </td>
-      <td>
-        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
-          {element.attributes.is_closed? 'Closed' : 'Pending'}
-        </Badge>
-      </td>
-      <td>
-        <Button
-          leftIcon={<Receipt />}
-          onClick={() => {
-            getSpecificBloodRequest(element.id);
-            setOpened(true);
-            setIsEdit(true);
-          }}
-        >
-          Make Appointment
-        </Button>
-      </td>
-    </tr>
-  ));
-
   return (
     <Wrapper>
       <Modal
@@ -143,15 +125,11 @@ const Requests = () => {
               required
               {...form.getInputProps("date_time")}
             />
-            {/* <TimeInput
-              label="Pick time"
-              format="12"
-              {...form.getInputProps("time")}
-            /> */}
             <Select
               placeholder="Select here"
               {...form.getInputProps('time')}
-              data = {APPOINTMENT_SCHEDS}>
+              data = {APPOINTMENT_SCHEDS}
+              required>
             </Select>
             <Anchor href="/appointments">
               <Button type="submit">Save</Button>
@@ -170,11 +148,7 @@ const Requests = () => {
         <TextInput
             placeholder="Organization name"
             value={searchValue} 
-            onChange={(event) => setSearchValue(event.currentTarget.value)}
-            onKeyUp={(event) => {
-              if (event.key === 'Enter')
-              console.log("H")
-            }}/>        
+            onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
       <Card shadow="sm" mt="sm">
         <Table striped highlightOnHover>

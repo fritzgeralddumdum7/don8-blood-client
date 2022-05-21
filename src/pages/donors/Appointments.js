@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
-import { Badge, Button, Group, Stack, Modal, Table, Card, Badge, Select } from '@mantine/core';
+import { Badge, Button, Group, Stack, Modal, Table, Card, Select } from '@mantine/core';
 import { DatePicker, TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Receipt } from 'tabler-icons-react';
@@ -9,7 +9,6 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
 import { formatDateTime } from '@/helpers';
-import Table from "@/components/Table";
 import { APPOINTMENT_SCHEDS } from '@/constant';
 
 const Appointments = () => {
@@ -87,7 +86,8 @@ const Appointments = () => {
   }
 
   useEffect(() => {
-    getDonorAppointments();
+    if (authUser)
+      getDonorAppointments();
   }, []);
 
   useEffect(() => {   
@@ -150,16 +150,11 @@ const Appointments = () => {
               required
               {...form.getInputProps("date_time")}
             />
-            {/* <TimeInput
-              label="Pick time"
-              format="12"
-              {...form.getInputProps("time")}
-            /> */}
             <Select
               placeholder="Select here"
               {...form.getInputProps('time')}
-              data = {APPOINTMENT_SCHEDS}>
-            </Select>
+              data = {APPOINTMENT_SCHEDS}
+              required />                
             <Button type="submit">Save</Button>
           </Stack>
         </form>

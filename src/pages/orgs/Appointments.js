@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
 import { Table, Card, Badge, Button, Group, Drawer, Stack } from '@mantine/core';
-import { DatePicker, TimeInput } from '@mantine/dates';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';

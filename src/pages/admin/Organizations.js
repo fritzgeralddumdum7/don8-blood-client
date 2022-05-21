@@ -18,6 +18,8 @@ import { DatePicker, TimeInput } from '@mantine/dates';
 import { Pencil, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
 import { Organization, OrganizationType, CityMunicipality } from '@/services';
+import { formatAsSelectData } from '@/helpers';
+import { useSelector } from 'react-redux';
 
 const Organizations = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -25,12 +27,15 @@ const Organizations = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   const [organizationId, setOrganizationId] = useState(0);
+  const [cities, setCities] = useState([]);
   //for dropdowns items
   const [organizationTypes, setOrganizationTypes] = useState([]); 
   const [cityMunicipalities, setCityMunicipalities] = useState([]); 
   //for table items
   const [organizations, setOrganizations] = useState([]);
   
+  const { provinces } = useSelector(state => state.provinces);
+
   const form = useForm({
     initialValues: {
       name: '',
@@ -95,17 +100,6 @@ const Organizations = () => {
 
   //dropdown items
   useEffect(() => {
-    const getCityMunicipalities = () => {
-      CityMunicipality.getCityMunicipalities(51).then((response) => {
-        setCityMunicipalities(response.data.data);    
-      }).catch(err => console.log(err));
-    };
-
-    getCityMunicipalities();
-  }, []);
-
-  //dropdown items
-  useEffect(() => {
     const getOrganizationTypes = () => {
       OrganizationType.getOrganizationTypes().then((response) => {
         setOrganizationTypes(response.data.data);    
@@ -114,6 +108,14 @@ const Organizations = () => {
 
     getOrganizationTypes();
   }, []);
+
+  const fetchCityHandler = (id) => {
+    CityMunicipality.getCityMunicipalities(id)
+      .then(res => {
+        const data = res.data.data;
+        setCities(formatAsSelectData(data, 'name'));
+      }).catch(err => console.error(err))
+  }
 
   const createOrganization = (payload) => {
     Organization.create(payload).then((response) => {
@@ -133,6 +135,11 @@ const Organizations = () => {
       form.reset();
     }).catch(err => console.log(err));    
   }
+
+  useEffect(() => {
+    if (!isDrawerOpened)
+      form.reset();
+  }, [isDrawerOpened])
 
   return (
     <Wrapper>
@@ -167,19 +174,25 @@ const Organizations = () => {
                 item["value"] = element.id;
                 item["label"] = element.attributes.name;
                 return item;
-              })}
+              })}              
+              searchable
+            />
+            <Select
+              label="Province"
+              placeholder="Select here"
+              data={provinces}
+              onChange={(event) => {
+                fetchCityHandler(event);
+                form.setValues(values => ({...values, province: event }));
+                form.setFieldValue('city_municipality', null);
+              }}
               searchable
             />
             <Select
               label="City/Municipality"
               placeholder="Select here"
-              {...form.getInputProps('city_municipality_id')}
-              data={cityMunicipalities.map(element => {
-                let item = {};
-                item["value"] = element.id;
-                item["label"] = element.attributes.name;
-                return item;
-              })}
+              data={cities}
+              {...form.getInputProps('city_municipality_id')}              
               searchable
             />
             <Button type='submit'>Save</Button>
