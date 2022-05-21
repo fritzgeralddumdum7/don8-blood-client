@@ -79,6 +79,11 @@ export const ADMIN_NAV_ITEMS = [
     Component: Notes,
     href: '/cases'
   },
+  {
+    text: 'Cases',
+    Component: Notes,
+    href: '/cases'
+  },
 ]
 
 export const ROLES = [
