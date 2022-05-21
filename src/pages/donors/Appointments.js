@@ -50,7 +50,7 @@ const Appointments = () => {
 
   //table items
   const getDonorAppointments = () => {
-    Appointment.getDonorAllAppointments(authUser.id).then((response) => { //donor's id
+    Appointment.getDonorAllAppointments().then((response) => { //donor's id
       setDonorAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };

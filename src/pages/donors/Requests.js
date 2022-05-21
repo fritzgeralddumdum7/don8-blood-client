@@ -7,6 +7,11 @@ import {
   Stack,
   Modal,
   Anchor,
+  Group,
+  Text,
+  TextInput,
+  Table
+  
 } from "@mantine/core";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
@@ -16,7 +21,6 @@ import { BloodRequest, Appointment } from "@/services";
 import moment from "moment";
 import {formatDateTime} from '@/helpers';
 import { useSelector } from 'react-redux';
-import Table from "@/components/Table";
 
 const Requests = () => {
   const [opened, setOpened] = useState(false);
@@ -24,6 +28,7 @@ const Requests = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   const [minSchedDate, setMinSchedDate] = useState(new Date());
+  const [searchValue, setSearchValue] = useState('');
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
   
@@ -45,11 +50,12 @@ const Requests = () => {
 
   //table items
   const getBloodRequests = () => {
-    BloodRequest.getOpenBloodRequestsForDonor(authUser)//donor
-      .then((response) => {
-        setBloodRequests(response.data.data);
-      })
-      .catch((err) => console.log(err));
+    if (authUser)
+      BloodRequest.getOpenBloodRequestsForDonor()
+        .then((response) => {
+          setBloodRequests(response.data.data);
+        })
+        .catch((err) => console.log(err));
   };
 
   useEffect(() => {
@@ -72,7 +78,7 @@ const Requests = () => {
   const getSpecificBloodRequest = (id) => {
     BloodRequest.getSpecificBloodRequest(id).then((response) => {
       const bloodRequest = response.data.data[0];
-      setMinSchedDate(bloodRequest.attributes.date_time);
+      //setMinSchedDate(bloodRequest.attributes.date_time);
       form.setValues({ date_time: new Date(bloodRequest.attributes.date_time), blood_request_id: id, user_id: authUser.id }); //donor's id
     })
     .catch((err) => console.log(err));
@@ -153,9 +159,34 @@ const Requests = () => {
         text="Would you like to delete?"
         type="delete"
       />
-      <Table columns={COLUMNS} rows={bloodRequests}>
-        <tbody>{rows}</tbody>
-      </Table>
+      <Group position="left" py='md'>
+        <Text>Search:</Text>
+        <TextInput
+            placeholder="Organization name"
+            value={searchValue} 
+            onChange={(event) => setSearchValue(event.currentTarget.value)}
+            onKeyUp={(event) => {
+              if (event.key === 'Enter')
+              console.log("H")
+            }}/>        
+      </Group>
+      <Card shadow="sm" mt="sm">
+        <Table striped highlightOnHover>
+          <thead>
+            <tr>
+              <th>Request Code</th>
+              <th>Organization</th>
+              <th>Blood Type</th>
+              <th>Request Type</th>
+              <th>Case</th>
+              <th>Schedule</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </Card>
     </Wrapper>
   );
 };

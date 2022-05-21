@@ -79,7 +79,7 @@ const Requests = () => {
 
   //table items
   const getOrgBloodRequests = () => {
-    BloodRequest.getOrgAllBloodRequests(authUser.organization_id).then((response) => {
+    BloodRequest.getOrgAllBloodRequests().then((response) => {
       setBloodRequests(response.data.data);    
     }).catch(err => console.log(err));
   };
