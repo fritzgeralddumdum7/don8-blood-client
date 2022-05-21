@@ -21,7 +21,6 @@ import { Receipt } from "tabler-icons-react";
 import AlertDialog from "@/components/AlertDialog";
 import { BloodRequest, Appointment } from "@/services";
 import moment from "moment";
-import { useAuth } from '@/contexts/AuthProvider';
 import {formatDateTime} from '@/helpers';
 import { useSelector } from 'react-redux';
 
@@ -30,6 +29,7 @@ const Requests = () => {
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
+  const [minSchedDate, setMinSchedDate] = useState(new Date());
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
   
@@ -76,8 +76,13 @@ const Requests = () => {
 
   //for creation of appointment on modal
   const getSpecificBloodRequest = (id) => {
-    form.setValues({ date_time: new Date(), blood_request_id: id, user_id: authUser.id }); //donor's id
-  };
+    BloodRequest.getSpecificBloodRequest(id).then((response) => {
+      const bloodRequest = response.data.data[0];
+      setMinSchedDate(bloodRequest.attributes.date_time);
+      form.setValues({ date_time: new Date(bloodRequest.attributes.date_time), blood_request_id: id, user_id: authUser.id }); //donor's id
+    })
+    .catch((err) => console.log(err));
+  }
 
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
@@ -122,7 +127,7 @@ const Requests = () => {
             <DatePicker
               placeholder="Select date"
               label="Event date"
-              minDate={new Date()}
+              minDate={minSchedDate}
               required
               {...form.getInputProps("date_time")}
             />

@@ -65,7 +65,14 @@ const BloodRequest = {
     };
 
     return await API.request(options);
-  }
+  },
+  cancel: async (id) => {
+    const options = {
+        method: 'PATCH',
+        url: `/blood_requests/${id}/cancel`,
+    };
+    return await API.request(options);
+  },
 }
 
 export default BloodRequest;

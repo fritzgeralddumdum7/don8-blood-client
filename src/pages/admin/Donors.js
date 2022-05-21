@@ -1,59 +1,100 @@
+import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
-import { Table, Card, Badge, Button, Group } from '@mantine/core';
-import { Receipt } from 'tabler-icons-react';
+import {
+  Table,
+  Card,
+  Badge,
+  Button,
+  Stack,
+  TextInput,
+  Select,
+  Group,
+  Drawer,
+  Text,
+  ListItem
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { Clock, Pencil, Receipt, Receipt2, Trash } from 'tabler-icons-react';
+import AlertDialog from '@/components/AlertDialog';
+import Alert from '@/components/AlertDialog';
+import { User } from '@/services';
+import moment from 'moment';
 
-const elements = [
-  { position: 6, mass: 12.011, symbol: 'C', name: 'Carbon' },
-  { position: 7, mass: 14.007, symbol: 'N', name: 'Nitrogen' },
-  { position: 39, mass: 88.906, symbol: 'Y', name: 'Yttrium' },
-  { position: 56, mass: 137.33, symbol: 'Ba', name: 'Barium' },
-  { position: 58, mass: 140.12, symbol: 'Ce', name: 'Cerium' },
-];
+const Donors = () => {
+  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
+  const [isDialogOpened, setIsDialogOpened] = useState(false);
+  const [toProceed, setToProceed] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [isShowAlert, setIsShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [transactionType, setTransactionType] = useState('');
+  //for table items
+  const [donors, setDonors] = useState([]);
+  
+  //table items
+  const getDonors = () => {
+    User.getByRole(1).then((response) => {//Donor = Role 1 
+      setDonors(response.data.data);    
+    }).catch(err => console.log(err));
+  };
 
-const rows = elements.map((element) => (
-  <tr key={element.name}>
-    <td>{element.position}</td>
-    <td>{element.position}</td>
-    <td>{element.name}</td>
-    <td>{element.name}</td>
-    <td>{element.symbol}</td>
-    <td>
-      <Badge color='red' variant="filled">Pending</Badge>
-    </td>
-    <td>
-      <Group>
-        <Button leftIcon={<Receipt />}>
-          Rebook
-        </Button>
-        <Button leftIcon={<Receipt />} color='red'>
-          Cancel
-        </Button>
-      </Group>
-    </td>
-  </tr>
-));
+  useEffect(() => {
+    getDonors();
+  }, []);
 
-const Patients = () => {
+  const rows = donors.map((element) => (
+    <tr key={element.id}>
+      <td>{element.attributes.name}</td>
+      <td>{element.attributes.blood_type_name}</td>
+      <td>{element.attributes.city_municipality_name}</td>
+      <td>{element.attributes.province_name}</td>
+      <td></td>
+    </tr>
+  ));
+
   return (
     <Wrapper>
+      <Drawer
+        opened={isDrawerOpened}
+        onClose={() => setIsDrawerOpened(false)}
+        title={isEdit ? 'Edit Patient' : 'Create Patient'}
+        padding="xl"
+        size="xl"
+        styles={() => ({
+          title: { fontWeight: 'bold' }
+        })}
+      >
+      </Drawer>
+      <Alert
+        isShow={isShowAlert}
+        setIsShow={setIsShowAlert}
+        type='error'
+        text={alertMsg}
+      />
+      <AlertDialog
+        isToggled={isDialogOpened}
+        setIsToggled={setIsDialogOpened}
+        setToProceed={setToProceed}
+        text={alertMsg}
+        type={transactionType}
+      />
       <Card shadow="sm" mt='sm'>
         <Table striped highlightOnHover>
           <thead>
             <tr>
               <th>Donor</th>
               <th>Blood Type</th>
-              <th>Blood Request Type</th>
-              <th>Category</th>
-              <th>Schedule</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th>City/Municipality</th>
+              <th>Province</th>              
+              <th>Age</th>              
             </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
-      </Card>
+      </Card>      
     </Wrapper>
   );
 }
 
-export default Patients;
+export default Donors;
