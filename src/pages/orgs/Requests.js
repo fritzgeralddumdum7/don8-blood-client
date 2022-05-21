@@ -168,8 +168,8 @@ const Requests = () => {
     setToProceed(false);//reset
   }
 
-  const deleteBloodRequest = () => {
-    BloodRequest.delete(bloodRequestId).then((response) => {
+  const cancelBloodRequest = () => {
+    BloodRequest.cancel(bloodRequestId).then((response) => {
       if (response.data.status === 'Successful')
         getOrgBloodRequests();
       else{
@@ -182,7 +182,7 @@ const Requests = () => {
 
   useEffect(() => {   
     if (toProceed && transactionType === 'delete')
-      deleteBloodRequest();
+      cancelBloodRequest();
     else if (toProceed && transactionType === 'close')
       closeBloodRequest();
     else if (toProceed && transactionType === 'reOpen')
@@ -272,6 +272,7 @@ const Requests = () => {
                   return item;
                 })}
                 searchable
+                maxDropdownHeight={280}
               />
             <Select
               label="Blood Type"
