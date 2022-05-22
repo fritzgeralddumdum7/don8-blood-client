@@ -3,29 +3,30 @@ import {
   Mail,
   Notes,
   LayoutDashboard,
-  Users
+  Users,
+  BuildingCommunity
 } from 'tabler-icons-react';
 
 export const DONOR_NAV_ITEMS = [
   {
     text: 'Dashboard',
     Component: LayoutDashboard,
-    href: '/'
+    href: ['/']
   },
   {
     text: 'Requests',
-    Component: Mail,
-    href: '/requests'
+    Component: HeartHandshake,
+    href: ['/requests']
   },
   {
     text: 'Appointments',
     Component: Notes,
-    href: '/appointments'
+    href: ['/appointments']
   },
   {
     text: 'Organizations',
-    Component: Notes,
-    href: '/organizations'
+    Component: BuildingCommunity,
+    href: ['/organizations']
   }
 ]
 
@@ -33,27 +34,22 @@ export const ORGS_NAV_ITEMS = [
   {
     text: 'Dashboard',
     Component: LayoutDashboard,
-    href: '/'
+    href: ['/']
   },
   {
     text: 'Requests',
-    Component: Mail,
-    href: '/requests'
+    Component: HeartHandshake,
+    href: ['/requests']
   },
   {
     text: 'Appointments',
     Component: Notes,
-    href: '/appointments'
+    href: ['/appointments']
   },
   {
     text: 'Patients',
     Component: Users,
-    href: '/patients'
-  },
-  {
-    text: 'Donors',
-    Component: HeartHandshake,
-    href: '/donors'
+    href: ['/patients']
   }
 ]
 
@@ -61,21 +57,67 @@ export const ADMIN_NAV_ITEMS = [
   {
     text: 'Dashboard',
     Component: LayoutDashboard,
-    href: '/'
+    href: ['/']
   },
   {
     text: 'Organizations',
-    Component: Users,
-    href: '/organizations'
+    Component: BuildingCommunity,
+    href: ['/organizations']
   },
   {
     text: 'Patients',
     Component: Users,
-    href: '/patients'
+    href: ['/patients']
   },
   {
     text: 'Donors',
     Component: Users,
-    href: '/donors'
+    href: ['/donors']
   },
 ]
+
+export const ROLES = [
+  {
+    value: '1',
+    label: 'Donor'
+  },
+  {
+    value: '2',
+    label: 'Organization Member'
+  },
+  {
+    value: '3',
+    label: 'Patient'
+  }
+]
+
+export const LINE_CHART_CONFIG = {
+  type: 'line',
+  data: {
+    datasets: []
+  },
+  options: {
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'right',
+        align: 'start'
+      },
+      title: {
+        display: true,
+        text: 'Cases per Month',
+        position: 'bottom',
+        padding: 20,
+        color: '#000',
+        font: {
+          size: 16
+        }
+      }
+    }
+  }
+}

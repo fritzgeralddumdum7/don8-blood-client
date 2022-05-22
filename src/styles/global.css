@@ -12,9 +12,3 @@
     background: rgba(17, 42, 94, 0.3);
     z-index: 1;
 }
-
-#root {
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-}

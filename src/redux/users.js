@@ -12,11 +12,15 @@ export const fetchUserProfile = createAsyncThunk('users/fetchUserProfile',
 export const usersSlice = createSlice({
   name: 'users',
   initialState: {
-    authUser: null
+    authUser: null,
+    isFetching: false
   },
   reducers: {
     resetAuthUser: state => {
-        state.authUser = null;
+      state.authUser = null;
+    },
+    setIsFetching: (state, payload) => {
+      state.authUser = payload;
     }
   },
   extraReducers: {
@@ -26,6 +30,9 @@ export const usersSlice = createSlice({
   }
 })
 
-export const { resetAuthUser } = usersSlice.actions;
+export const {
+  resetAuthUser,
+  setIsFetching
+} = usersSlice.actions;
 
 export default usersSlice.reducer;
