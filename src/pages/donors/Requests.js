@@ -1,33 +1,21 @@
 import { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import Wrapper from "@/components/Wrapper";
-import {
-  Card,
-  Badge,
-  Button,
-  Stack,
-  Modal,
-  Anchor,
-  Group,
-  Text,
-  TextInput,
-  Table,
-  Select  
-} from "@mantine/core";
-import { DatePicker, TimeInput } from "@mantine/dates";
+import Table from '@/components/Table';
+import AlertDialog from "@/components/AlertDialog";
+import { Badge, Button, Stack, Modal, Anchor, Group, Text, TextInput, Select } from "@mantine/core";
+import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDebouncedValue } from '@mantine/hooks';
 import { Receipt } from "tabler-icons-react";
-import AlertDialog from "@/components/AlertDialog";
 import { BloodRequest, Appointment } from "@/services";
-import moment from "moment";
 import {formatDateTime} from '@/helpers';
-import { useSelector } from 'react-redux';
 import { APPOINTMENT_SCHEDS } from '@/constant';
+import moment from "moment";
 
 const Requests = () => {
   const [opened, setOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   const [minSchedDate, setMinSchedDate] = useState(new Date());
   const [searchValue, setSearchValue] = useState('');
@@ -52,7 +40,7 @@ const Requests = () => {
   });
 
   //table items
-  const getBloodRequests = () => {
+  const getDonorBloodRequests = () => {
     if (authUser)
       BloodRequest.getOpenBloodRequestsForDonor()
         .then((response) => {
@@ -61,18 +49,12 @@ const Requests = () => {
         .catch((err) => console.log(err));
   };
 
-  //First load
+  //First load and filter
   useEffect(() => {
-    getBloodRequests();
-  }, []);
-
-  useEffect(() => {
-    if (debounced){
-      BloodRequest.getOpenBloodRequestsForDonor(debounced).then((response) => {
-        setBloodRequests(response.data.data);
-      })
-      .catch((err) => console.log(err));
-    }    
+    BloodRequest.getOpenBloodRequestsForDonor(debounced).then((response) => {
+      setBloodRequests(response.data.data);
+    })
+    .catch((err) => console.log(err));        
   }, [debounced])
 
   const createAppointment = (payload) => {
@@ -80,7 +62,7 @@ const Requests = () => {
     payload = {...payload, date_time: final_date_time}
     Appointment.create(payload)
       .then((response) => {
-        getBloodRequests();
+        getDonorBloodRequests();
         setErrors(response.data.errors);
         setOpened(false);
       })
@@ -128,8 +110,7 @@ const Requests = () => {
           leftIcon={<Receipt />}
           onClick={() => {
             getSpecificBloodRequest(element.id);
-            setOpened(true);
-            setIsEdit(true);
+            setOpened(true);            
           }}
         >
           Make Appointment
@@ -180,23 +161,9 @@ const Requests = () => {
             value={searchValue} 
             onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
-      <Card shadow="sm" mt="sm">
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Request Code</th>
-              <th>Organization</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Table columns={COLUMNS} rows={bloodRequests}>
+        <tbody>{rows}</tbody>
+      </Table>      
     </Wrapper>
   );
 };

@@ -1,24 +1,27 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
-import { Badge, Button, Group, Stack, Modal, Table, Card, Select } from '@mantine/core';
-import { DatePicker, TimeInput } from '@mantine/dates';
+import Table from '@/components/Table';
+import AlertDialog from '@/components/AlertDialog';
+import { Badge, Button, Group, Stack, Modal, Select, Text, TextInput } from '@mantine/core';
+import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
-import moment from 'moment';
-import { useSelector } from 'react-redux';
-import AlertDialog from '@/components/AlertDialog';
 import { formatDateTime } from '@/helpers';
 import { APPOINTMENT_SCHEDS } from '@/constant';
+import moment from 'moment';
 
 const Appointments = () => {
   const [opened, setOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [toProceed, setToProceed] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   const [transactionType, setTransactionType] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for table items
   const [donorAppointments, setDonorAppointments] = useState([]);
   //selected appointment
@@ -50,9 +53,10 @@ const Appointments = () => {
 
   //table items
   const getDonorAppointments = () => {
-    Appointment.getDonorAllAppointments().then((response) => { //donor's id
-      setDonorAppointments(response.data.data);    
-    }).catch(err => console.log(err));
+    if (authUser)
+      Appointment.getDonorAllAppointments().then((response) => { //donor's id
+        setDonorAppointments(response.data.data);    
+      }).catch(err => console.log(err));
   };
 
   //for edit on modal   
@@ -85,10 +89,12 @@ const Appointments = () => {
     setToProceed(false);//reset
   }
 
+  //First load and filter
   useEffect(() => {
-    if (authUser)
-      getDonorAppointments();
-  }, []);
+    Appointment.getDonorAllAppointments(debounced).then((response) => {
+      setDonorAppointments(response.data.data); 
+    }).catch((err) => console.log(err));    
+  }, [debounced])
 
   useEffect(() => {   
     if (toProceed && transactionType === 'cancel')
@@ -112,8 +118,7 @@ const Appointments = () => {
             disabled={element.attributes.is_completed}
             onClick={() => {
               getSpecificAppoinment(element.id);
-              setOpened(true);
-              setIsEdit(true);            
+              setOpened(true);            
           }}>
             Rebook
           </Button>
@@ -166,6 +171,13 @@ const Appointments = () => {
         text={alertMsg}
         type={transactionType}
       />
+      <Group position="left" py='md'>
+        <Text>Search:</Text>
+        <TextInput
+            placeholder="Organization name"
+            value={searchValue} 
+            onChange={(event) => setSearchValue(event.target.value)} />        
+      </Group>
       <Table columns={COLUMNS} rows={donorAppointments}>
         <tbody>{rows}</tbody>
       </Table>

@@ -22,12 +22,7 @@ export const DONOR_NAV_ITEMS = [
     text: 'Appointments',
     Component: Notes,
     href: ['/appointments']
-  },
-  {
-    text: 'Organizations',
-    Component: BuildingCommunity,
-    href: ['/organizations']
-  }
+  },  
 ]
 
 export const ORGS_NAV_ITEMS = [
@@ -55,11 +50,6 @@ export const ORGS_NAV_ITEMS = [
 
 export const ADMIN_NAV_ITEMS = [
   {
-    text: 'Dashboard',
-    Component: LayoutDashboard,
-    href: ['/']
-  },
-  {
     text: 'Organizations',
     Component: BuildingCommunity,
     href: ['/organizations']
@@ -78,12 +68,7 @@ export const ADMIN_NAV_ITEMS = [
     text: 'Cases',
     Component: Notes,
     href: '/cases'
-  },
-  {
-    text: 'Cases',
-    Component: Notes,
-    href: '/cases'
-  },
+  },  
 ]
 
 export const ROLES = [
@@ -177,7 +162,7 @@ export const APPOINTMENT_SCHEDS = [
     label: "1:00 pm"                
   },
   {
-    value: new Date('January 1, 2022 13:00:00'),
+    value: new Date('January 1, 2022 13:30:00'),
     label: "1:30 pm"                
   },
   {

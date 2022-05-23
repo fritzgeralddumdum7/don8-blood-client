@@ -41,6 +41,7 @@ const App = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { authUser } = useSelector(state => state.users);
+  const [auth, setAuth] = useState(null);
 
   const redirectPath = location.pathname || '/';
 
@@ -53,12 +54,12 @@ const App = () => {
   useEffect(() => {
     const auth = Cookies.get('avion_access_token');
     if (auth && !UNAUTH_ROUTES.includes(redirectPath)) {
-      navigate(redirectPath, { replace: true });
+      setAuth(true);
     } else {
-      if (auth) {
-        return navigate('/', { replace: true });
+      if (UNAUTH_ROUTES.includes(redirectPath)) {
+        return navigate(redirectPath, { replace: true });
       }
-      navigate(redirectPath, { replace: true });
+      navigate('/login', { replace: true });
     }
   }, []);
 
@@ -71,6 +72,26 @@ const App = () => {
       dispatch(fetchOrgs());
     }
   }, [isMounted]);
+
+  useEffect(() => {
+    if (authUser && auth) {
+      const redirectPath = location.pathname || '/organizations';
+      if (authUser?.role === 4 && redirectPath !== '/' && !UNAUTH_ROUTES.includes(redirectPath)) {
+        return navigate(redirectPath, { replace: true });
+      } else {
+        const auth = Cookies.get('avion_access_token');
+        if (auth && authUser?.role !== 4 && redirectPath === '/login') {
+          return navigate('/', { replace: true });
+        } else {
+          if (authUser?.role !== 4 && redirectPath !== '/organizations') {
+            return navigate(redirectPath, { replace: true });
+          } else {
+            return navigate('/organizations', { replace: true });
+          }
+        }
+      }
+    }
+  }, [auth, authUser])
 
   let pendingRequests = 0;
 
@@ -126,6 +147,13 @@ const App = () => {
                       <RequireAuth>
                         <DonorsDashboard />
                       </RequireAuth>
+                    )}
+                  />
+
+                  <Route
+                    path="*"
+                    element={(
+                      <RequireAuth />
                     )}
                   />
                 </> :

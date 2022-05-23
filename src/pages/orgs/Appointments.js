@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
-import { Table, Card, Badge, Button, Group, Drawer, Stack } from '@mantine/core';
+import Table from '@/components/Table';
+import AlertDialog from '@/components/AlertDialog';
+import { Badge, Button, Group, Text, TextInput } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
-import AlertDialog from '@/components/AlertDialog';
+
 
 const Appointments = () => {
-  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [toProceed, setToProceed] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [transactionType, setTransactionType] = useState('');
-  const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
+  const [searchValue, setSearchValue] = useState('');
+  const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for ui values
   const [valueDate, setValueDate] = useState(new Date());
   const [valueTime, setValueTime] = useState(new Date());
@@ -25,21 +28,33 @@ const Appointments = () => {
 
   const {authUser} = useSelector(state => state.users )
 
+  const COLUMNS = [
+    'Donor',
+    'Blood Type',
+    'Request Type',
+    'Case',
+    'Schedule',
+    'Request Code',
+    'Status',
+    'Actions'
+  ];
+
   const getOrgAppointments = () => {
     Appointment.getOrgAllAppointments().then((response) => {
       setOrgAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };
 
+  //First load and filter
   useEffect(() => {
-    if (authUser)
-      getOrgAppointments();
-  }, [authUser]);
+    Appointment.getOrgAllAppointments(debounced).then((response) => {
+      setOrgAppointments(response.data.data);
+    }).catch((err) => console.log(err));    
+  }, [debounced])
 
-  const completeAppointment = (id) => {
-    Appointment.complete(id).then((response) => {
-      getOrgAppointments();      
-      console.log(response.data.errors);
+  const completeAppointment = () => {
+    Appointment.complete(appointmentId).then((response) => {
+      getOrgAppointments();            
     }).catch(err => console.log(err));    
   }
 
@@ -52,7 +67,11 @@ const Appointments = () => {
 
   useEffect(() => {   
     if (toProceed && transactionType === 'cancel')
-      cancelAppointment();         
+      cancelAppointment();      
+    else if(toProceed && transactionType === 'complete')   
+      completeAppointment();
+
+    setToProceed(false);  
   }, [toProceed]);
 
   const rows = orgAppointments.map((element) => (
@@ -72,7 +91,13 @@ const Appointments = () => {
         <Group>
           <Button leftIcon={<Receipt />}
             disabled={element.attributes.is_completed}
-            onClick={() => completeAppointment(element.id)}>
+            onClick={() => {
+              setIsDialogOpened(true);
+              setAppointmentId(element.id);
+              setTransactionType('complete');
+              setAlertMsg('Complete appointment?')
+            }}>
+              {/* //completeAppointment(element.id) */}
             Complete
           </Button>
           <Button leftIcon={<Receipt />} color='red'
@@ -100,23 +125,16 @@ const Appointments = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Card shadow="sm" mt='sm'>
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Donor</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Request Code</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Group position="left" py='md'>
+        <Text>Search:</Text>
+        <TextInput
+            placeholder="Donor name"
+            value={searchValue} 
+            onChange={(event) => setSearchValue(event.target.value)} />        
+      </Group>
+      <Table columns={COLUMNS} rows={orgAppointments}>
+        <tbody>{rows}</tbody>
+      </Table>      
     </Wrapper>
   );
 }

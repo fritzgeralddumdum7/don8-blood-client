@@ -1,25 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
-import {
-  Table,
-  Card,
-  Badge,
-  Button,
-  Stack,
-  Select,
-  Group,
-  Drawer  
-} from '@mantine/core';
-import { DatePicker, TimeInput } from '@mantine/dates';
-import { useForm } from '@mantine/form';
-import { Clock, Pencil, Receipt, Receipt2, Trash } from 'tabler-icons-react';
+import Table from '@/components/Table';
 import AlertDialog from '@/components/AlertDialog';
 import Alert from '@/components/AlertDialog';
-import { BloodType, Case, BloodRequest, RequestType, User } from '@/services';
-import moment from 'moment';
+import { Badge, Button, Stack, Select, Group, Drawer, Text, TextInput } from '@mantine/core';
+import { DatePicker } from '@mantine/dates';
+import { useForm } from '@mantine/form';
+import { useDebouncedValue } from '@mantine/hooks';
+import { Clock, Pencil, Trash } from 'tabler-icons-react';
+import { Case, BloodRequest, RequestType, User } from '@/services';
 import {formatDateTime} from '@/helpers';
-import { useSelector } from 'react-redux';
 import { APPOINTMENT_SCHEDS } from '@/constant';
+import moment from 'moment';
 
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -30,6 +23,8 @@ const Requests = () => {
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [transactionType, setTransactionType] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for dropdowns items
   const [cases, setCases] = useState([]); 
   const [requestTypes, setRequestTypes] = useState([]); 
@@ -40,6 +35,18 @@ const Requests = () => {
   const [bloodRequestId, setBloodRequestId] = useState(0);
   
   const {authUser} = useSelector(state => state.users )
+
+  const COLUMNS = [
+    'Request Code',
+    'Patient',
+    'Blood Type',
+    'Request Type',
+    'Case',
+    'Schedule',
+    'No. of Appts.',
+    'Status',
+    'Actions'
+  ];
 
   const form = useForm({
     initialValues: {
@@ -62,8 +69,11 @@ const Requests = () => {
     setBloodRequestId(id);
     BloodRequest.getSpecificBloodRequest(id).then((response) => {
       const bloodRequest = response.data.data[0];
+      const newTime = new Date('01/01/2022 ' + moment(bloodRequest.attributes.date_time).format('HH:mm'));
+      console.log(newTime);
+      console.log(APPOINTMENT_SCHEDS);
       form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
-                      time: new Date(bloodRequest.attributes.date_time),
+                      time: newTime,
                       user_id: bloodRequest.attributes.user_id.toString(),
                       request_type_id: bloodRequest.attributes.request_type_id.toString(),
                       case_id: bloodRequest.attributes.case_id.toString()});   
@@ -79,10 +89,12 @@ const Requests = () => {
     }).catch(err => console.log(err));
   };
 
-  useEffect(() => {
-    if (authUser)
-      getOrgBloodRequests();
-  }, [authUser]);
+  //First load and filter
+  useEffect(() => {    
+      BloodRequest.getOrgAllBloodRequests(debounced).then((response) => {
+        setBloodRequests(response.data.data);
+      }).catch(err => console.log(err));
+  }, [debounced])
 
   //dropdown items
   useEffect(() => {
@@ -186,6 +198,7 @@ const Requests = () => {
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
+      <td>{element.attributes.no_of_appointments}</td>
       <td>
         <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
           {element.attributes.is_closed? 'Closed' : 'Pending'}
@@ -304,23 +317,16 @@ const Requests = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Card shadow="sm" mt='sm'>
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Request Code</th>
-              <th>Patient</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Group position="left" py='md'>
+        <Text>Search:</Text>
+        <TextInput
+            placeholder="Request code or Patient name"
+            value={searchValue} 
+            onChange={(event) => setSearchValue(event.target.value)} />        
+      </Group>
+      <Table columns={COLUMNS} rows={bloodRequests}>
+        <tbody>{rows}</tbody>
+      </Table>      
       <Group position="right" py='md'>
         <Button onClick={() => {
           setIsDrawerOpened(true);
