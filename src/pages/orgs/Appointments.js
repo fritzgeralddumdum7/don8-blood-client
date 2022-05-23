@@ -47,10 +47,9 @@ const Appointments = () => {
       getOrgAppointments();
   }, [authUser]);
 
-  const completeAppointment = (id) => {
-    Appointment.complete(id).then((response) => {
-      getOrgAppointments();      
-      console.log(response.data.errors);
+  const completeAppointment = () => {
+    Appointment.complete(appointmentId).then((response) => {
+      getOrgAppointments();            
     }).catch(err => console.log(err));    
   }
 
@@ -63,7 +62,11 @@ const Appointments = () => {
 
   useEffect(() => {   
     if (toProceed && transactionType === 'cancel')
-      cancelAppointment();         
+      cancelAppointment();      
+    else if(toProceed && transactionType === 'complete')   
+      completeAppointment();
+
+    setToProceed(false);  
   }, [toProceed]);
 
   const rows = orgAppointments.map((element) => (
@@ -83,7 +86,13 @@ const Appointments = () => {
         <Group>
           <Button leftIcon={<Receipt />}
             disabled={element.attributes.is_completed}
-            onClick={() => completeAppointment(element.id)}>
+            onClick={() => {
+              setIsDialogOpened(true);
+              setAppointmentId(element.id);
+              setTransactionType('complete');
+              setAlertMsg('Complete appointment?')
+            }}>
+              {/* //completeAppointment(element.id) */}
             Complete
           </Button>
           <Button leftIcon={<Receipt />} color='red'

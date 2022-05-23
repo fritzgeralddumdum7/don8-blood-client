@@ -48,6 +48,7 @@ const Requests = () => {
     'Request Type',
     'Case',
     'Schedule',
+    'No. of Appts.',
     'Status',
     'Actions'
   ];
@@ -73,8 +74,11 @@ const Requests = () => {
     setBloodRequestId(id);
     BloodRequest.getSpecificBloodRequest(id).then((response) => {
       const bloodRequest = response.data.data[0];
+      const newTime = new Date('01/01/2022 ' + moment(bloodRequest.attributes.date_time).format('HH:mm'));
+      console.log(newTime);
+      console.log(APPOINTMENT_SCHEDS);
       form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
-                      time: new Date(bloodRequest.attributes.date_time),
+                      time: newTime,
                       user_id: bloodRequest.attributes.user_id.toString(),
                       request_type_id: bloodRequest.attributes.request_type_id.toString(),
                       case_id: bloodRequest.attributes.case_id.toString()});   
@@ -197,6 +201,7 @@ const Requests = () => {
       <td>{element.attributes.request_type_name}</td>
       <td>{element.attributes.case_name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
+      <td>{element.attributes.no_of_appointments}</td>
       <td>
         <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
           {element.attributes.is_closed? 'Closed' : 'Pending'}

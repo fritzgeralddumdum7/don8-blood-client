@@ -167,7 +167,7 @@ export const APPOINTMENT_SCHEDS = [
     label: "1:00 pm"                
   },
   {
-    value: new Date('January 1, 2022 13:00:00'),
+    value: new Date('January 1, 2022 13:30:00'),
     label: "1:30 pm"                
   },
   {
