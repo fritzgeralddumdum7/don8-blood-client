@@ -108,6 +108,36 @@ const Requests = () => {
     'Actions'
   ];
 
+  const rows = bloodRequests.map((element) => (
+    <tr key={element.id}>
+      <td>{element.attributes.code}</td>
+      <td>{element.attributes.organization_name}</td>
+      <td>{element.attributes.blood_type_name}</td>
+      <td>{element.attributes.request_type_name}</td>
+      <td>{element.attributes.case_name}</td>
+      <td>
+        {moment(element.attributes.date_time).format("MM/DD/YYYY hh:mm a")}
+      </td>
+      <td>
+        <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
+          {element.attributes.is_closed? 'Closed' : 'Pending'}
+        </Badge>
+      </td>
+      <td>
+        <Button
+          leftIcon={<Receipt />}
+          onClick={() => {
+            getSpecificBloodRequest(element.id);
+            setOpened(true);
+            setIsEdit(true);
+          }}
+        >
+          Make Appointment
+        </Button>
+      </td>
+    </tr>
+  ));
+  
   return (
     <Wrapper>
       <Modal
