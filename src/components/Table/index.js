@@ -3,8 +3,6 @@ import {
   Card,
   Table as MantineTable,
   Text,
-  Pagination,
-  Group,
   Stack
 } from '@mantine/core';
 
@@ -31,9 +29,6 @@ const Table = ({ children, columns, rows = [] }) => {
           }
         </MantineTable>
       </Card>
-      <Group position='right'>
-        <Pagination total={1} />
-      </Group>
     </Stack>
   )
 }

@@ -1,25 +1,20 @@
 import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
 import {
-  Table,
-  Card,
-  Badge,
   Button,
   Stack,
   TextInput,
   Select,
   Group,
-  Drawer,
-  Text,
-  ListItem
+  Drawer
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { DatePicker, TimeInput } from '@mantine/dates';
 import { Pencil, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
 import { Organization, OrganizationType, CityMunicipality } from '@/services';
 import { formatAsSelectData } from '@/helpers';
 import { useSelector } from 'react-redux';
+import Table from '@/components/Table';
 
 const Organizations = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -204,21 +199,10 @@ const Organizations = () => {
         setIsToggled={setIsDialogOpened}
         text='Would you like to delete?'
         type='delete'
-      />      
-      <Card shadow="sm" mt='sm'>
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>City/Municipality</th>
-              <th>Province</th>
-              <th>Type</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      /> 
+      <Table columns={['Name', 'City/Municipality', 'Province', 'Type', 'Actions']} rows={organizations}>
+        <tbody>{rows}</tbody>
+      </Table>   
       <Group position="right" py='md'>
         <Button onClick={() => {
          setIsDrawerOpened(true);

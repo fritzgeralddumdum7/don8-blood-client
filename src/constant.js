@@ -61,7 +61,7 @@ export const ADMIN_NAV_ITEMS = [
   },
   {
     text: 'Donors',
-    Component: Users,
+    Component: HeartHandshake,
     href: ['/donors']
   },
   {

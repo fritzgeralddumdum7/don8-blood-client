@@ -234,6 +234,15 @@ const App = () => {
                         </RequireAuth>
                       )}
                     />
+                    <Route
+                      path="/cases"
+                      exact
+                      element={(
+                        <RequireAuth>
+                          <AdminCases />
+                        </RequireAuth>
+                      )}
+                    />
                   </>
             }
           </Routes>

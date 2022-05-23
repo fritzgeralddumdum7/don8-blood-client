@@ -1,24 +1,12 @@
 import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
 import {
-  Table,
-  Card,
-  Badge,
-  Button,
-  Stack,
-  TextInput,
-  Select,
-  Group,
-  Drawer,
-  Text,
-  ListItem
+  Drawer
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { Clock, Pencil, Receipt, Receipt2, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
 import Alert from '@/components/AlertDialog';
 import { User } from '@/services';
-import moment from 'moment';
+import Table from '@/components/Table';
 
 const Donors = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -79,20 +67,9 @@ const Donors = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Card shadow="sm" mt='sm'>
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Donor</th>
-              <th>Blood Type</th>
-              <th>City/Municipality</th>
-              <th>Province</th>              
-              <th>Age</th>              
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>      
+      <Table columns={['Patient', 'Blood Type', 'City/Municipality', 'Province', 'Age']} rows={donors}>
+        <tbody>{rows}</tbody>
+      </Table>      
     </Wrapper>
   );
 }

@@ -1,23 +1,18 @@
 import { useState, useEffect } from 'react';
 import Wrapper from '@/components/Wrapper';
 import {
-  Table,
-  Card,
-  Badge,
   Button,
   Stack,
   TextInput,
   Textarea,
-  Select,
   Group,
-  Drawer,
-  Text,
-  ListItem
+  Drawer
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Pencil, Trash } from 'tabler-icons-react';
 import AlertDialog from '@/components/AlertDialog';
 import { Case } from '@/services';
+import Table from '@/components/Table';
 
 const Cases = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -137,18 +132,10 @@ const Cases = () => {
         setIsToggled={setIsDialogOpened}
         text='Would you like to delete?'
         type='delete'
-      />      
-      <Card shadow="sm" mt='sm'>
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Name</th>
-							<th>Description</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      />   
+      <Table columns={['Name', 'Description']} rows={cases}>
+        <tbody>{rows}</tbody>
+      </Table>  
       <Group position="right" py='md'>
         <Button onClick={() => {
          setIsDrawerOpened(true);

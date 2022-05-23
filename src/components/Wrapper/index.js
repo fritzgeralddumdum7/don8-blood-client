@@ -195,13 +195,13 @@ const Wrapper = ({ children }) => {
   }
 
   const getUserHeader = () => {
-    if (authUser.role === 1 || authUser.role === 4) {
+    if (authUser?.role === 1 || authUser?.role === 4) {
       return {
         profileIcon: authUser.blood_type?.name || 'BD',
         name: `${authUser.firstname} ${authUser.lastname}`,
         email: authUser.email
       }
-    } else if (authUser.role === 2) {
+    } else if (authUser?.role === 2) {
       return {
         profileIcon: 'BD',
         name: authUser.organization.name,
@@ -258,7 +258,7 @@ const Wrapper = ({ children }) => {
             </MediaQuery>
             <Menu control={
               <Group sx={{ cursor: 'pointer' }}>
-                <Tooltip opened={isToggled} label={authUser.role === 1 ? 'Blood Type' : 'Blood Donate'} withArrow>
+                <Tooltip opened={isToggled} label={authUser?.role === 1 ? 'Blood Type' : 'Blood Donate'} withArrow>
                   <Avatar
                     styles={() => ({
                       root: {
