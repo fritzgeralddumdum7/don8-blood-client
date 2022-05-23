@@ -123,79 +123,79 @@ export const LINE_CHART_CONFIG = {
 }
 export const APPOINTMENT_SCHEDS = [
   {
-    value: new Date('January 1, 2022 07:30:00'),
+    value: '7:30 am',
     label: "7:30 am"                
   },
   {
-    value: new Date('January 1, 2022 08:00:00'),
+    value: '8:00 am',
     label: "8:00 am"                
   },
   {
-    value: new Date('January 1, 2022 08:30:00'),
+    value: '8:30 am',
     label: "8:30 am"                
   },
   {
-    value: new Date('January 1, 2022 09:00:00'),
+    value: '9:00 am',
     label: "9:00 am"                
   },
   {
-    value: new Date('January 1, 2022 09:30:00'),
+    value: '9:30 am',
     label: "9:30 am"                
   },
   {
-    value: new Date('January 1, 2022 10:00:00'),
+    value: '10:00 am',
     label: "10:00 am"                
   },
   {
-    value: new Date('January 1, 2022 10:30:00'),
+    value: '10:30 am',
     label: "10:30 am"                
   },
   {
-    value: new Date('January 1, 2022 11:00:00'),
+    value: '11:00 am',
     label: "11:00 am"                
   },
   {
-    value: new Date('January 1, 2022 11:30:00'),
+    value: '11:30 am',
     label: "11:30 am"                
   },
   {
-    value: new Date('January 1, 2022 12:00:00'),
-    label: "12:00 am"                
+    value: '12:00 pm',
+    label: "12:00 pm"                
   },
   {
-    value: new Date('January 1, 2022 13:00:00'),
+    value: '1:00 pm',
     label: "1:00 pm"                
   },
   {
-    value: new Date('January 1, 2022 13:30:00'),
+    value: '1:30 pm',
     label: "1:30 pm"                
   },
   {
-    value: new Date('January 1, 2022 14:00:00'),
+    value: '2:00 pm',
     label: "2:00 pm"                
   },
   {
-    value: new Date('January 1, 2022 14:30:00'),
+    value: '2:30 pm',
     label: "2:30 pm"                
   },
   {
-    value: new Date('January 1, 2022 15:00:00'),
+    value: '3:00 pm',
     label: "3:00 pm"                
   },
   {
-    value: new Date('January 1, 2022 15:30:00'),
+    value: '3:30 pm',
     label: "3:30 pm"                
   },
   {
-    value: new Date('January 1, 2022 16:00:00'),
+    value: '4:00 pm',
     label: "4:00 pm"                
   },
   {
-    value: new Date('January 1, 2022 16:30:00'),
+    value: '4:30 pm',
     label: "4:30 pm"                
   },
   {
-    value: new Date('January 1, 2022 17:00:00'),
+    value: '5:00 pm',
     label: "5:00 pm"                
   },
 ]
