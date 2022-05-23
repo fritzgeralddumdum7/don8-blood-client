@@ -1,19 +1,19 @@
 import API from './base';
 
 const Appointment = {
-  getOrgAllAppointments: async (organization_id) => {
+  getOrgAllAppointments: async () => {
     const options = {
       method: 'GET',
       url: '/appointments',
-      params: {organization_id}
+      params: {transaction_type: 'allappointments_of_org'}
     }
     return await API.request(options);
   },
-  getOrgDoneAppointments: async (organization_id) => {
+  getOrgDoneAppointments: async () => {
     const options = {
       method: 'GET',
       url: '/appointments',
-      params: {is_completed: true, organization_id: organization_id}
+      params: {transaction_type: 'completedappointments_of_org'}
     }
     return await API.request(options);
   },
@@ -24,19 +24,19 @@ const Appointment = {
     }
     return await API.request(options);
   },
-  getDonorAllAppointments: async (id) => {
+  getDonorAllAppointments: async () => {
     const options = {
       method: 'GET',
       url: '/appointments',
-      params: {user_id: id}
+      params: {transaction_type: 'allappointments_of_donor'}
     }
     return await API.request(options);
   },
-  getDonorDoneAppointments: async (user_id) => {
+  getDonorDoneAppointments: async () => {
     const options = {
       method: 'GET',
       url: '/appointments',
-      params: {is_completed: true, user_id: user_id}
+      params: {transaction_type: 'completedappointments_of_donor'}
     }
     return await API.request(options);
   },

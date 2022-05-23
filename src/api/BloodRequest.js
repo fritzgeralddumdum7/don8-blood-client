@@ -1,11 +1,11 @@
 import API from './base';
 
 const BloodRequest = {
-  getOrgAllBloodRequests: async (organization_id) => {
+  getOrgAllBloodRequests: async () => {
     const options = {
       method: 'GET',
       url: '/blood_requests',
-      params: {organization_id}
+      params: {transaction_type: 'requests_of_org'}
     }
     return await API.request(options);
   },
@@ -16,11 +16,11 @@ const BloodRequest = {
     }
     return await API.request(options);
   },
-  getOpenBloodRequestsForDonor: async (authuser) => {
+  getOpenBloodRequestsForDonor: async () => {
     const options = {
       method: 'GET',
-      url: `/blood_requests`,
-      params: {blood_type_id: authuser.blood_type_id, user_id: authuser.id}
+      url: `/blood_requests/`,
+      params: {transaction_type: 'openrequests_for_donor'}
     }
     return await API.request(options);
   },

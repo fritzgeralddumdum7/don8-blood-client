@@ -27,7 +27,7 @@ const Appointments = () => {
   const {authUser} = useSelector(state => state.users )
 
   const getOrgAppointments = () => {
-    Appointment.getOrgAllAppointments(authUser.organization_id).then((response) => {
+    Appointment.getOrgAllAppointments().then((response) => {
       setOrgAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };
@@ -36,10 +36,6 @@ const Appointments = () => {
     if (authUser)
       getOrgAppointments();
   }, [authUser]);
-
-  const updateAppointment = () =>{
-     
-  }
 
   const completeAppointment = (id) => {
     Appointment.complete(id).then((response) => {
@@ -105,33 +101,6 @@ const Appointments = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Drawer
-        opened={isDrawerOpened}
-        onClose={() => setIsDrawerOpened(false)}
-        title={isEdit ? 'Edit Request' : 'Create Request'}
-        padding="xl"
-        size="xl"
-        styles={() => ({
-          title: { fontWeight: 'bold' }
-        })}
-      >
-        <Stack>
-          <DatePicker 
-            placeholder="Select date" 
-            label="Event date" 
-            required 
-            value={valueDate}
-            onChange={setValueDate}
-          />
-          <TimeInput 
-            label="Pick time" 
-            format="12" 
-            value={valueTime}
-            onChange={setValueTime}
-          />
-          <Button onClick={updateAppointment}>Save</Button>
-        </Stack>
-      </Drawer>
       <Card shadow="sm" mt='sm'>
         <Table striped highlightOnHover>
           <thead>

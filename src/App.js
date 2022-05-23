@@ -8,6 +8,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AdminOrganizations from '@/pages/admin/Organizations';
 import AdminPatients from '@/pages/admin/Patients';
 import AdminDonors from '@/pages/admin/Donors';
+import AdminCases from '@/pages/admin/Cases';
 
 import DonorsRequests from '@/pages/donors/Requests';
 import DonorsAppointments from '@/pages/donors/Appointments';

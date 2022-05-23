@@ -117,8 +117,10 @@ const Organizations = () => {
 
   const createOrganization = (payload) => {
     Organization.create(payload).then((response) => {
+      getOrganizations();
       setErrors(response.data.errors);
       setIsDrawerOpened(false);      
+      form.reset();
     }).catch(err => console.log(err));    
   }
 

@@ -12,15 +12,15 @@ const Donations = () => {
 
   const {authUser} = useSelector(state => state.users )
 
-  const getOrgAppointments = (organization_id) => {
-    Appointment.getOrgDoneAppointments(organization_id).then((response) => {
+  const getOrgAppointments = () => {
+    Appointment.getOrgDoneAppointments().then((response) => {
       setOrgAppointments(response.data.data);    
     }).catch(err => console.log(err));
   };
 
   useEffect(() => {
     if (authUser)
-      getOrgAppointments(authUser.organization_id);
+      getOrgAppointments();
   }, [authUser]);
 
   const rows = orgAppointments.map((element) => (
