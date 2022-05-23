@@ -121,6 +121,8 @@ const Cases = () => {
             />
             <Textarea
               label="Description"
+              autosize
+              minRows={5}
               {...form.getInputProps('description')}              
             />            
             <Button type='submit'>Save</Button>
