@@ -7,7 +7,8 @@ import {
   TextInput,
   Anchor,
   Group,
-  Alert
+  Alert,
+  Text
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAuth } from '@/contexts/AuthProvider';
@@ -20,6 +21,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState(null);
+  const [isValid, setIsValid] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -38,15 +40,20 @@ const Login = () => {
   return (
     <Container size='xs'>
       <form onSubmit={form.onSubmit((values) => {
+        setIsValid(true);
         User.login({ user: values })
           .then(res => {
             API.defaults.headers.Authorization = res.headers.authorization;
             auth.login(res.headers.authorization);
-            navigate(redirectPath, { replace: true });
+            if (res.data.role !== 4) {
+              navigate(redirectPath, { replace: true });
+            } else {
+              navigate('/organizations', { replace: true });
+            }
           }).catch(error => {
             const res = error.response.data;
             setError(res.error);
-          })
+          }).finally(() => setIsValid(false))
       })}>
         <Stack spacing={30} pt={150}>
           {
@@ -69,17 +76,17 @@ const Login = () => {
             {...form.getInputProps('password')}
             label="Password"
           />
-          <Group position='apart'>
-            <Anchor href="/reset-password" size='lg'>
-              Forgot your password?
-            </Anchor>
-            <Anchor href="/sign-up" size='lg'>
-              Create account
-            </Anchor>
-          </Group>
-          <Button size='lg' px={50} type='submit'>
+          <Button size='lg' px={50} type='submit' loading={isValid} loaderPosition="right">
             Login
           </Button>
+          <Group position='right'>
+            <Text align='center' sx={{ width: '100%' }}>
+              Not registered?&nbsp;
+              <Anchor href="/sign-up" size='lg'>
+                Create an account
+              </Anchor>
+            </Text>
+          </Group>
         </Stack>
       </form>
     </Container>
