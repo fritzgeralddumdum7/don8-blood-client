@@ -100,6 +100,11 @@ const Cases = () => {
     }).catch(err => console.log(err));    
   }
 
+  useEffect(() => {
+    if (!isDrawerOpened)
+      form.reset();
+  }, [isDrawerOpened])
+
   return (
     <Wrapper>
       <Drawer

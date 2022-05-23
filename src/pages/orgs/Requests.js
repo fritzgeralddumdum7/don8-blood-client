@@ -33,7 +33,6 @@ const Requests = () => {
   //for dropdowns items
   const [cases, setCases] = useState([]); 
   const [requestTypes, setRequestTypes] = useState([]); 
-  const [bloodTypes, setBloodTypes] = useState([]); 
   const [patients, setPatients] = useState([]); 
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
@@ -47,15 +46,14 @@ const Requests = () => {
       date_time: new Date(),
       user_id: '', 
       case_id: '',
-      request_type_id: '',
-      blood_type_id: ''      
+      request_type_id: '',      
     },
 
     validate: {
-      date_time: (value) => value ? null : 'No schedule',
+      date_time: (value) => value ? null : 'No selected date',
+      time: (value) => value ? null : 'No selected time',
       case_id: (value) => value ? null : 'No selected case',
-      request_type_id: (value) => value ? null : 'No selected request type',
-      blood_type_id: (value) => value ? null : 'No selected blood type',
+      request_type_id: (value) => value ? null : 'No selected request type',      
     },
   });
 
@@ -67,7 +65,6 @@ const Requests = () => {
       form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
                       time: new Date(bloodRequest.attributes.date_time),
                       user_id: bloodRequest.attributes.user_id.toString(),
-                      blood_type_id: bloodRequest.attributes.blood_type_id.toString(),
                       request_type_id: bloodRequest.attributes.request_type_id.toString(),
                       case_id: bloodRequest.attributes.case_id.toString()});   
                          
@@ -96,17 +93,6 @@ const Requests = () => {
     };
 
     getPatients();
-  }, []);
-
-  //dropdown items
-  useEffect(() => {
-    const getBloodTypes = () => {
-      BloodType.getBloodTypes().then((response) => {
-        setBloodTypes(response.data.data);    
-      }).catch(err => console.log(err));
-    };
-
-    getBloodTypes();
   }, []);
 
   //dropdown items
@@ -177,6 +163,11 @@ const Requests = () => {
     }).catch(err => console.log(err));
     setToProceed(false);//reset
   }
+
+  useEffect(() => {
+    if (!isDrawerOpened)
+      form.reset();
+  }, [isDrawerOpened])
 
   useEffect(() => {   
     if (toProceed && transactionType === 'delete')
@@ -254,16 +245,11 @@ const Requests = () => {
               required 
               {...form.getInputProps('date_time')}
             />
-            {/* <TimeInput 
-              label="Pick time" 
-              format="12" 
-              {...form.getInputProps('time')}
-            /> */}
             <Select
               placeholder="Select here"
               {...form.getInputProps('time')}
-              data = {APPOINTMENT_SCHEDS}>
-            </Select>
+              data = {APPOINTMENT_SCHEDS}
+              required />
             <Select
                 label="Patient Name"
                 placeholder="Select here"
@@ -275,20 +261,8 @@ const Requests = () => {
                   return item;
                 })}
                 searchable
-                maxDropdownHeight={280}
+                maxDropdownHeight={280}                
               />
-            <Select
-              label="Blood Type"
-              placeholder="Select here"
-              {...form.getInputProps('blood_type_id')}
-              data = {bloodTypes.map(element => {
-                let item = {};
-                item["value"] = element.id;
-                item["label"] = element.attributes.name;
-                return item;
-              })}
-              searchable
-            />
             <Select
               label="Request Type"
               placeholder="Select here"

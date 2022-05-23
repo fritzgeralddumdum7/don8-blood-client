@@ -42,8 +42,8 @@ const AlertDialog = ({ isToggled, setIsToggled, text, type, setToProceed }) => {
         p={0}
         style={{ border: 0 }}
       >
-        <Notification icon={<Check size={18} />} color="teal" title="Teal notification" onClose={() => setIsNotifOpened(false)}>
-          This is teal notification with icon
+        <Notification icon={<Check size={18} />} color="teal" title="Success" onClose={() => setIsNotifOpened(false)}>
+          Action successful
         </Notification>
       </Dialog>
       <Modal

@@ -16,11 +16,15 @@ const BloodRequest = {
     }
     return await API.request(options);
   },
-  getOpenBloodRequestsForDonor: async () => {
+  getOpenBloodRequestsForDonor: async (param) => {
+    let params = {transaction_type: 'openrequests_for_donor',}
+    if (param){
+      params = {...params, keyword: param}
+    }
     const options = {
       method: 'GET',
       url: `/blood_requests/`,
-      params: {transaction_type: 'openrequests_for_donor'}
+      params
     }
     return await API.request(options);
   },
