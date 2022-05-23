@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
-import { Badge, Button, Group, Stack, Modal, Table, Card, Select } from '@mantine/core';
-import { DatePicker, TimeInput } from '@mantine/dates';
+import Table from '@/components/Table';
+import AlertDialog from '@/components/AlertDialog';
+import { Badge, Button, Group, Stack, Modal, Select } from '@mantine/core';
+import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
-import moment from 'moment';
-import { useSelector } from 'react-redux';
-import AlertDialog from '@/components/AlertDialog';
 import { formatDateTime } from '@/helpers';
 import { APPOINTMENT_SCHEDS } from '@/constant';
+import moment from 'moment';
 
 const Appointments = () => {
   const [opened, setOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [toProceed, setToProceed] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   const [transactionType, setTransactionType] = useState('');
   //for table items
@@ -112,8 +112,7 @@ const Appointments = () => {
             disabled={element.attributes.is_completed}
             onClick={() => {
               getSpecificAppoinment(element.id);
-              setOpened(true);
-              setIsEdit(true);            
+              setOpened(true);            
           }}>
             Rebook
           </Button>

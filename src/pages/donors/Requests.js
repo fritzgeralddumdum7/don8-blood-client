@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import Wrapper from "@/components/Wrapper";
+import Table from '@/components/Table';
+import AlertDialog from "@/components/AlertDialog";
 import {
-  Card,
   Badge,
   Button,
   Stack,
@@ -10,24 +12,20 @@ import {
   Group,
   Text,
   TextInput,
-  Table,
   Select  
 } from "@mantine/core";
-import { DatePicker, TimeInput } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDebouncedValue } from '@mantine/hooks';
 import { Receipt } from "tabler-icons-react";
-import AlertDialog from "@/components/AlertDialog";
 import { BloodRequest, Appointment } from "@/services";
-import moment from "moment";
 import {formatDateTime} from '@/helpers';
-import { useSelector } from 'react-redux';
 import { APPOINTMENT_SCHEDS } from '@/constant';
+import moment from "moment";
 
 const Requests = () => {
   const [opened, setOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   const [minSchedDate, setMinSchedDate] = useState(new Date());
   const [searchValue, setSearchValue] = useState('');
@@ -128,8 +126,7 @@ const Requests = () => {
           leftIcon={<Receipt />}
           onClick={() => {
             getSpecificBloodRequest(element.id);
-            setOpened(true);
-            setIsEdit(true);
+            setOpened(true);            
           }}
         >
           Make Appointment
@@ -180,23 +177,9 @@ const Requests = () => {
             value={searchValue} 
             onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
-      <Card shadow="sm" mt="sm">
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Request Code</th>
-              <th>Organization</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Table columns={COLUMNS} rows={bloodRequests}>
+        <tbody>{rows}</tbody>
+      </Table>      
     </Wrapper>
   );
 };

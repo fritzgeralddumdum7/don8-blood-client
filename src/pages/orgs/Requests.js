@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
+import Table from '@/components/Table';
+import AlertDialog from '@/components/AlertDialog';
+import Alert from '@/components/AlertDialog';
 import {
-  Table,
   Card,
   Badge,
   Button,
@@ -10,16 +13,13 @@ import {
   Group,
   Drawer  
 } from '@mantine/core';
-import { DatePicker, TimeInput } from '@mantine/dates';
+import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { Clock, Pencil, Receipt, Receipt2, Trash } from 'tabler-icons-react';
-import AlertDialog from '@/components/AlertDialog';
-import Alert from '@/components/AlertDialog';
-import { BloodType, Case, BloodRequest, RequestType, User } from '@/services';
-import moment from 'moment';
+import { Clock, Pencil, Trash } from 'tabler-icons-react';
+import { Case, BloodRequest, RequestType, User } from '@/services';
 import {formatDateTime} from '@/helpers';
-import { useSelector } from 'react-redux';
 import { APPOINTMENT_SCHEDS } from '@/constant';
+import moment from 'moment';
 
 const Requests = () => {
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
@@ -40,6 +40,17 @@ const Requests = () => {
   const [bloodRequestId, setBloodRequestId] = useState(0);
   
   const {authUser} = useSelector(state => state.users )
+
+  const COLUMNS = [
+    'Request Code',
+    'Patient',
+    'Blood Type',
+    'Request Type',
+    'Case',
+    'Schedule',
+    'Status',
+    'Actions'
+  ];
 
   const form = useForm({
     initialValues: {
@@ -304,23 +315,9 @@ const Requests = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Card shadow="sm" mt='sm'>
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Request Code</th>
-              <th>Patient</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Table columns={COLUMNS} rows={bloodRequests}>
+        <tbody>{rows}</tbody>
+      </Table>      
       <Group position="right" py='md'>
         <Button onClick={() => {
           setIsDrawerOpened(true);

@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
-import { Table, Card, Badge, Button, Group, Drawer, Stack } from '@mantine/core';
+import Table from '@/components/Table';
+import AlertDialog from '@/components/AlertDialog';
+import { Badge, Button, Group } from '@mantine/core';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
-import AlertDialog from '@/components/AlertDialog';
+
 
 const Appointments = () => {
-  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [toProceed, setToProceed] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [transactionType, setTransactionType] = useState('');
-  const [isEdit, setIsEdit] = useState(false);
   const [errors, setErrors] = useState({});
   //for ui values
   const [valueDate, setValueDate] = useState(new Date());
@@ -24,6 +24,17 @@ const Appointments = () => {
   const [appointmentId, setAppointmentId] = useState(0);
 
   const {authUser} = useSelector(state => state.users )
+
+  const COLUMNS = [
+    'Donor',
+    'Blood Type',
+    'Request Type',
+    'Case',
+    'Schedule',
+    'Request Code',
+    'Status',
+    'Actions'
+  ];
 
   const getOrgAppointments = () => {
     Appointment.getOrgAllAppointments().then((response) => {
@@ -100,23 +111,9 @@ const Appointments = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Card shadow="sm" mt='sm'>
-        <Table striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Donor</th>
-              <th>Blood Type</th>
-              <th>Request Type</th>
-              <th>Case</th>
-              <th>Schedule</th>
-              <th>Request Code</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Card>
+      <Table columns={COLUMNS} rows={orgAppointments}>
+        <tbody>{rows}</tbody>
+      </Table>      
     </Wrapper>
   );
 }

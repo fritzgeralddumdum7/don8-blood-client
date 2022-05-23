@@ -22,12 +22,7 @@ export const DONOR_NAV_ITEMS = [
     text: 'Appointments',
     Component: Notes,
     href: ['/appointments']
-  },
-  {
-    text: 'Organizations',
-    Component: BuildingCommunity,
-    href: ['/organizations']
-  }
+  },  
 ]
 
 export const ORGS_NAV_ITEMS = [
@@ -78,12 +73,7 @@ export const ADMIN_NAV_ITEMS = [
     text: 'Cases',
     Component: Notes,
     href: '/cases'
-  },
-  {
-    text: 'Cases',
-    Component: Notes,
-    href: '/cases'
-  },
+  },  
 ]
 
 export const ROLES = [
