@@ -17,7 +17,7 @@ import {
   Modal,
   TextInput,
   Grid,
-  Select,
+  Tooltip,
   Loader,
   Button,
   Stack,
@@ -57,6 +57,7 @@ const Wrapper = ({ children }) => {
   const [currentPasswordError, setCurrentPasswordError] = useState({});
   const [isTypingPassword, setIsTypingPassword] = useState(false);
   const location = useLocation();
+  const [isToggled, setIsToggled] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -193,6 +194,22 @@ const Wrapper = ({ children }) => {
     }, 300)
   }
 
+  const getUserHeader = () => {
+    if (authUser.role === 1 || authUser.role === 4) {
+      return {
+        profileIcon: authUser.blood_type?.name || 'BD',
+        name: `${authUser.firstname} ${authUser.lastname}`,
+        email: authUser.email
+      }
+    } else if (authUser.role === 2) {
+      return {
+        profileIcon: 'BD',
+        name: authUser.organization.name,
+        email: authUser.email
+      }
+    }
+  }
+
   useEffect(() => {
     if (debounced) {
       User.validatePassword({ password: debounced })
@@ -241,14 +258,23 @@ const Wrapper = ({ children }) => {
             </MediaQuery>
             <Menu control={
               <Group sx={{ cursor: 'pointer' }}>
-                <Avatar styles={() => ({
-                  root: {
-                    border: '1px solid #15aabf'
-                  }
-                })} color="cyan" radius="xl">BD</Avatar>
+                <Tooltip opened={isToggled} label={authUser.role === 1 ? 'Blood Type' : 'Blood Donate'} withArrow>
+                  <Avatar
+                    styles={() => ({
+                      root: {
+                        border: '1px solid #FA5252'
+                      }
+                    })}
+                    color="red" radius="xl"
+                    onMouseEnter={() => setIsToggled(true)}
+                    onMouseLeave={() => setIsToggled(false)}
+                  >
+                    {getUserHeader()?.profileIcon || 'BD'}
+                  </Avatar>
+                </Tooltip>
                 <Box>
-                  <Text size='sm' sx={{ lineHeight: '20px' }}>{authUser?.firstname} {authUser?.lastname}</Text>
-                  <Text size='sm' color='#868e96' sx={{ lineHeight: '20px' }}>{authUser?.email}</Text>
+                  <Text size='sm' sx={{ lineHeight: '20px' }}>{getUserHeader()?.name}</Text>
+                  <Text size='sm' color='#868e96' sx={{ lineHeight: '20px' }}>{getUserHeader()?.email}</Text>
                 </Box>
               </Group>
             }>
