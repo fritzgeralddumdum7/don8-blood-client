@@ -9,7 +9,9 @@ import {
 
 const Table = ({ children, columns, rows = [] }) => {
   return (
-    <Card shadow="sm">
+    <Card shadow="sm" styles={() => ({
+      root: { overflow: 'auto !important' }
+    })}>
       <MantineTable striped highlightOnHover>
         <thead>
           <tr>

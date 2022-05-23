@@ -89,19 +89,11 @@ const Requests = () => {
     }).catch(err => console.log(err));
   };
 
-  //First load
-  useEffect(() => {
-    if (authUser)
-      getOrgBloodRequests();
-  }, [authUser]);
-
-  useEffect(() => {
-    if (debounced){
+  //First load and filter
+  useEffect(() => {    
       BloodRequest.getOrgAllBloodRequests(debounced).then((response) => {
         setBloodRequests(response.data.data);
       }).catch(err => console.log(err));
-    }
-
   }, [debounced])
 
   //dropdown items

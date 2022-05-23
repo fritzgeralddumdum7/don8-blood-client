@@ -89,18 +89,11 @@ const Appointments = () => {
     setToProceed(false);//reset
   }
 
-  //First load
+  //First load and filter
   useEffect(() => {
-    if (authUser)
-      getDonorAppointments();
-  }, [authUser]);
-
-  useEffect(() => {
-    if (debounced){
-      Appointment.getDonorAllAppointments(debounced).then((response) => {
-        setDonorAppointments(response.data.data); 
-      }).catch((err) => console.log(err));
-    }
+    Appointment.getDonorAllAppointments(debounced).then((response) => {
+      setDonorAppointments(response.data.data); 
+    }).catch((err) => console.log(err));    
   }, [debounced])
 
   useEffect(() => {   

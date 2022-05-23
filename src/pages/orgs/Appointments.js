@@ -45,18 +45,11 @@ const Appointments = () => {
     }).catch(err => console.log(err));
   };
 
-  //First load
+  //First load and filter
   useEffect(() => {
-    if (authUser)
-      getOrgAppointments();
-  }, [authUser]);
-
-  useEffect(() => {
-    if (debounced){
-      Appointment.getOrgAllAppointments(debounced).then((response) => {
-        setOrgAppointments(response.data.data);
-      }).catch((err) => console.log(err));
-    }
+    Appointment.getOrgAllAppointments(debounced).then((response) => {
+      setOrgAppointments(response.data.data);
+    }).catch((err) => console.log(err));    
   }, [debounced])
 
   const completeAppointment = () => {
@@ -135,7 +128,7 @@ const Appointments = () => {
       <Group position="left" py='md'>
         <Text>Search:</Text>
         <TextInput
-            placeholder="Organization name"
+            placeholder="Donor name"
             value={searchValue} 
             onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
