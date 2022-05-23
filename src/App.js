@@ -4,6 +4,7 @@ import { AuthProvider } from '@/contexts/AuthProvider';
 import './styles/global.css';
 import Cookies from 'js-cookie';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { LoadingOverlay } from '@mantine/core';
 
 import AdminOrganizations from '@/pages/admin/Organizations';
 import AdminPatients from '@/pages/admin/Patients';
@@ -18,6 +19,7 @@ import OrgsRequests from '@/pages/orgs/Requests';
 import OrgsAppointments from '@/pages/orgs/Appointments';
 import OrgsPatients from '@/pages/orgs/Patients';
 import OrgsDonors from '@/pages/orgs/Donors';
+import OrgsDashboard from '@/pages/orgs/Dashboard';
 
 import Dashboard from '@/pages/Dashboard';
 import Home from '@/pages/Home';
@@ -31,7 +33,6 @@ import { fetchBloodTypes } from '@/redux/bloodTypes';
 import { fetchProvinces } from '@/redux/provinces';
 import { fetchOrgTypes, fetchOrgs } from '@/redux/orgs';
 import API from '@/api/base';
-import { LoadingOverlay } from '@mantine/core';
 
 const App = () => {
   const navigate = useNavigate();
@@ -171,7 +172,7 @@ const App = () => {
                       exact
                       element={(
                         <RequireAuth>
-                          <Dashboard />
+                          <OrgsDashboard />
                         </RequireAuth>
                       )}
                     />

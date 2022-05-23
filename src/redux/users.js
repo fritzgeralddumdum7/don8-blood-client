@@ -4,8 +4,26 @@ import { User } from '@/services';
 export const fetchUserProfile = createAsyncThunk('users/fetchUserProfile',
   async () => {
     const response = await User.profile();
+    const { role } = response.data.data;
+    const { organization, city_municipality, blood_type } = response.data;
+    let result = response.data.data;
 
-    return response.data.data;
+    if (role === 1 || role === 3) {
+      result = {
+        ...response.data.data,
+        blood_type
+      }
+    }
+
+    if (role === 2) {
+      result = {
+        ...response.data.data,
+        organization,
+        city_municipality
+      }
+    }
+
+    return result;
   }
 )
 
