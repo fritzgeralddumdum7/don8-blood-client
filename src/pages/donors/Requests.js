@@ -3,17 +3,7 @@ import { useSelector } from 'react-redux';
 import Wrapper from "@/components/Wrapper";
 import Table from '@/components/Table';
 import AlertDialog from "@/components/AlertDialog";
-import {
-  Badge,
-  Button,
-  Stack,
-  Modal,
-  Anchor,
-  Group,
-  Text,
-  TextInput,
-  Select  
-} from "@mantine/core";
+import { Badge, Button, Stack, Modal, Anchor, Group, Text, TextInput, Select } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDebouncedValue } from '@mantine/hooks';
@@ -50,7 +40,7 @@ const Requests = () => {
   });
 
   //table items
-  const getBloodRequests = () => {
+  const getDonorBloodRequests = () => {
     if (authUser)
       BloodRequest.getOpenBloodRequestsForDonor()
         .then((response) => {
@@ -61,8 +51,9 @@ const Requests = () => {
 
   //First load
   useEffect(() => {
-    getBloodRequests();
-  }, []);
+    if (authUser)
+      getDonorBloodRequests();
+  }, [authUser]);
 
   useEffect(() => {
     if (debounced){
@@ -78,7 +69,7 @@ const Requests = () => {
     payload = {...payload, date_time: final_date_time}
     Appointment.create(payload)
       .then((response) => {
-        getBloodRequests();
+        getDonorBloodRequests();
         setErrors(response.data.errors);
         setOpened(false);
       })

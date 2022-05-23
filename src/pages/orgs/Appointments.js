@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
 import Table from '@/components/Table';
 import AlertDialog from '@/components/AlertDialog';
-import { Badge, Button, Group } from '@mantine/core';
+import { Badge, Button, Group, Text, TextInput } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import moment from 'moment';
@@ -15,6 +16,8 @@ const Appointments = () => {
   const [alertMsg, setAlertMsg] = useState('');
   const [transactionType, setTransactionType] = useState('');
   const [errors, setErrors] = useState({});
+  const [searchValue, setSearchValue] = useState('');
+  const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for ui values
   const [valueDate, setValueDate] = useState(new Date());
   const [valueTime, setValueTime] = useState(new Date());
@@ -42,10 +45,19 @@ const Appointments = () => {
     }).catch(err => console.log(err));
   };
 
+  //First load
   useEffect(() => {
     if (authUser)
       getOrgAppointments();
   }, [authUser]);
+
+  useEffect(() => {
+    if (debounced){
+      Appointment.getOrgAllAppointments(debounced).then((response) => {
+        setOrgAppointments(response.data.data);
+      }).catch((err) => console.log(err));
+    }
+  }, [debounced])
 
   const completeAppointment = () => {
     Appointment.complete(appointmentId).then((response) => {
@@ -120,6 +132,13 @@ const Appointments = () => {
         text={alertMsg}
         type={transactionType}
       />
+      <Group position="left" py='md'>
+        <Text>Search:</Text>
+        <TextInput
+            placeholder="Organization name"
+            value={searchValue} 
+            onChange={(event) => setSearchValue(event.target.value)} />        
+      </Group>
       <Table columns={COLUMNS} rows={orgAppointments}>
         <tbody>{rows}</tbody>
       </Table>      

@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux';
 import Wrapper from '@/components/Wrapper';
 import Table from '@/components/Table';
 import AlertDialog from '@/components/AlertDialog';
-import { Badge, Button, Group, Stack, Modal, Select } from '@mantine/core';
+import { Badge, Button, Group, Stack, Modal, Select, Text, TextInput } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Receipt } from 'tabler-icons-react';
 import { Appointment } from '@/services';
 import { formatDateTime } from '@/helpers';
@@ -19,6 +20,8 @@ const Appointments = () => {
   const [alertMsg, setAlertMsg] = useState('');
   const [errors, setErrors] = useState({});
   const [transactionType, setTransactionType] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for table items
   const [donorAppointments, setDonorAppointments] = useState([]);
   //selected appointment
@@ -50,9 +53,10 @@ const Appointments = () => {
 
   //table items
   const getDonorAppointments = () => {
-    Appointment.getDonorAllAppointments().then((response) => { //donor's id
-      setDonorAppointments(response.data.data);    
-    }).catch(err => console.log(err));
+    if (authUser)
+      Appointment.getDonorAllAppointments().then((response) => { //donor's id
+        setDonorAppointments(response.data.data);    
+      }).catch(err => console.log(err));
   };
 
   //for edit on modal   
@@ -85,10 +89,19 @@ const Appointments = () => {
     setToProceed(false);//reset
   }
 
+  //First load
   useEffect(() => {
     if (authUser)
       getDonorAppointments();
-  }, []);
+  }, [authUser]);
+
+  useEffect(() => {
+    if (debounced){
+      Appointment.getDonorAllAppointments(debounced).then((response) => {
+        setDonorAppointments(response.data.data); 
+      }).catch((err) => console.log(err));
+    }
+  }, [debounced])
 
   useEffect(() => {   
     if (toProceed && transactionType === 'cancel')
@@ -165,6 +178,13 @@ const Appointments = () => {
         text={alertMsg}
         type={transactionType}
       />
+      <Group position="left" py='md'>
+        <Text>Search:</Text>
+        <TextInput
+            placeholder="Organization name"
+            value={searchValue} 
+            onChange={(event) => setSearchValue(event.target.value)} />        
+      </Group>
       <Table columns={COLUMNS} rows={donorAppointments}>
         <tbody>{rows}</tbody>
       </Table>

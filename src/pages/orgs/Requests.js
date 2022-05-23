@@ -4,17 +4,10 @@ import Wrapper from '@/components/Wrapper';
 import Table from '@/components/Table';
 import AlertDialog from '@/components/AlertDialog';
 import Alert from '@/components/AlertDialog';
-import {
-  Card,
-  Badge,
-  Button,
-  Stack,
-  Select,
-  Group,
-  Drawer  
-} from '@mantine/core';
+import { Badge, Button, Stack, Select, Group, Drawer, Text, TextInput } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Clock, Pencil, Trash } from 'tabler-icons-react';
 import { Case, BloodRequest, RequestType, User } from '@/services';
 import {formatDateTime} from '@/helpers';
@@ -30,6 +23,8 @@ const Requests = () => {
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [transactionType, setTransactionType] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for dropdowns items
   const [cases, setCases] = useState([]); 
   const [requestTypes, setRequestTypes] = useState([]); 
@@ -94,10 +89,20 @@ const Requests = () => {
     }).catch(err => console.log(err));
   };
 
+  //First load
   useEffect(() => {
     if (authUser)
       getOrgBloodRequests();
   }, [authUser]);
+
+  useEffect(() => {
+    if (debounced){
+      BloodRequest.getOrgAllBloodRequests(debounced).then((response) => {
+        setBloodRequests(response.data.data);
+      }).catch(err => console.log(err));
+    }
+
+  }, [debounced])
 
   //dropdown items
   useEffect(() => {
@@ -320,6 +325,13 @@ const Requests = () => {
         text={alertMsg}
         type={transactionType}
       />
+      <Group position="left" py='md'>
+        <Text>Search:</Text>
+        <TextInput
+            placeholder="Request code or Patient name"
+            value={searchValue} 
+            onChange={(event) => setSearchValue(event.target.value)} />        
+      </Group>
       <Table columns={COLUMNS} rows={bloodRequests}>
         <tbody>{rows}</tbody>
       </Table>      

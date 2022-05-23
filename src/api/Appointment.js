@@ -1,19 +1,27 @@
 import API from './base';
 
 const Appointment = {
-  getOrgAllAppointments: async () => {
+  getOrgAllAppointments: async (param) => {
+    let params = {transaction_type: 'allappointments_of_org'};
+    if (param){
+      params = {...params, keyword: param}
+    }
     const options = {
       method: 'GET',
       url: '/appointments',
-      params: {transaction_type: 'allappointments_of_org'}
+      params
     }
     return await API.request(options);
   },
-  getOrgDoneAppointments: async () => {
+  getDonorAllAppointments: async (param) => {
+    let params = {transaction_type: 'allappointments_of_donor'}
+    if (param){
+      params = {...params, keyword: param}
+    }
     const options = {
       method: 'GET',
       url: '/appointments',
-      params: {transaction_type: 'completedappointments_of_org'}
+      params
     }
     return await API.request(options);
   },
@@ -21,22 +29,6 @@ const Appointment = {
     const options = {
       method: 'GET',
       url: `/appointments/${id}`,      
-    }
-    return await API.request(options);
-  },
-  getDonorAllAppointments: async () => {
-    const options = {
-      method: 'GET',
-      url: '/appointments',
-      params: {transaction_type: 'allappointments_of_donor'}
-    }
-    return await API.request(options);
-  },
-  getDonorDoneAppointments: async () => {
-    const options = {
-      method: 'GET',
-      url: '/appointments',
-      params: {transaction_type: 'completedappointments_of_donor'}
     }
     return await API.request(options);
   },

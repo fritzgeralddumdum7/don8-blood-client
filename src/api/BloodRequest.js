@@ -1,18 +1,15 @@
 import API from './base';
 
 const BloodRequest = {
-  getOrgAllBloodRequests: async () => {
+  getOrgAllBloodRequests: async (param) => {
+    let params = {transaction_type: 'requests_of_org'};
+    if (param){
+      params = {...params, keyword: param}
+    }
     const options = {
       method: 'GET',
       url: '/blood_requests',
-      params: {transaction_type: 'requests_of_org'}
-    }
-    return await API.request(options);
-  },
-  getSpecificBloodRequest: async (id) => {
-    const options = {
-      method: 'GET',
-      url: `/blood_requests/${id}`,      
+      params
     }
     return await API.request(options);
   },
@@ -25,6 +22,13 @@ const BloodRequest = {
       method: 'GET',
       url: `/blood_requests/`,
       params
+    }
+    return await API.request(options);
+  },
+  getSpecificBloodRequest: async (id) => {
+    const options = {
+      method: 'GET',
+      url: `/blood_requests/${id}`,      
     }
     return await API.request(options);
   },
