@@ -33,6 +33,7 @@ const Requests = () => {
   const [bloodRequests, setBloodRequests] = useState([]);
   //selected blood request
   const [bloodRequestId, setBloodRequestId] = useState(0);
+  const [maxPage, setMaxPage] = useState(0);
   
   const {authUser} = useSelector(state => state.users )
 
@@ -79,17 +80,20 @@ const Requests = () => {
   }    
 
   //table items
-  const getOrgBloodRequests = () => {
-    BloodRequest.getOrgAllBloodRequests().then((response) => {
-      setBloodRequests(response.data.data);    
+  const getOrgBloodRequests = (params = {}) => {
+    BloodRequest.getOrgAllBloodRequests(params).then((response) => {
+      setBloodRequests(response.data.data);   
+      setMaxPage(response.data.total_page);
     }).catch(err => console.log(err));
   };
 
   //First load and filter
-  useEffect(() => {    
-      BloodRequest.getOrgAllBloodRequests(debounced).then((response) => {
-        setBloodRequests(response.data.data);
-      }).catch(err => console.log(err));
+  useEffect(() => {
+    if (debounced)   {
+      getOrgBloodRequests({ keyword: debounced });
+    } else {
+      getOrgBloodRequests();
+    }
   }, [debounced])
 
   //dropdown items
@@ -189,10 +193,10 @@ const Requests = () => {
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.code}</td>
-      <td>{element.attributes.patient_name}</td>
-      <td>{element.attributes.blood_type_name}</td>
-      <td>{element.attributes.request_type_name}</td>
-      <td>{element.attributes.case_name}</td>
+      <td>{`${element.attributes.user.firstname} ${element.attributes.user.lastname}`}</td>
+      <td>{element.attributes.blood_type.name}</td>
+      <td>{element.attributes.request_type.name}</td>
+      <td>{element.attributes.case.name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
       <td>{element.attributes.no_of_appointments}</td>
       <td>
@@ -251,7 +255,7 @@ const Requests = () => {
               placeholder="Select date" 
               label="Event date" 
               minDate={new Date()}
-              required 
+              required
               {...form.getInputProps('date_time')}
             />
             <Select
@@ -326,7 +330,7 @@ const Requests = () => {
           value={searchValue} 
           onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
-      <Table columns={COLUMNS} rows={bloodRequests}>
+      <Table columns={COLUMNS} rows={bloodRequests} dispatchHandler={getOrgBloodRequests} maxPage={maxPage}>
         <tbody>{rows}</tbody>
       </Table>      
       <Group position="right" py='md'>

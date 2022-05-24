@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Wrapper from "@/components/Wrapper";
 import Table from '@/components/Table';
 import AlertDialog from "@/components/AlertDialog";
@@ -11,9 +11,11 @@ import { Receipt } from "tabler-icons-react";
 import { BloodRequest, Appointment } from "@/services";
 import {formatDateTime} from '@/helpers';
 import { APPOINTMENT_SCHEDS } from '@/constant';
+import { fetchTally } from "@/redux/users";
 import moment from "moment";
 
 const Requests = () => {
+  const dispatch = useDispatch();
   const [opened, setOpened] = useState(false);
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const [errors, setErrors] = useState({});
@@ -22,7 +24,8 @@ const Requests = () => {
   const [debounced] = useDebouncedValue(searchValue, 500, {leading: true});
   //for table items
   const [bloodRequests, setBloodRequests] = useState([]);
-  const {authUser} = useSelector(state => state.users )
+  const {authUser} = useSelector(state => state.users);
+  const [totalPage, setTotalPage] = useState(0);
 
   const form = useForm({
     initialValues: {
@@ -40,21 +43,26 @@ const Requests = () => {
   });
 
   //table items
-  const getDonorBloodRequests = () => {
-    if (authUser)
-      BloodRequest.getOpenBloodRequestsForDonor()
-        .then((response) => {
-          setBloodRequests(response.data.data);
-        })
-        .catch((err) => console.log(err));
+  const getDonorBloodRequests = (params = {}) => {
+    BloodRequest.getOpenBloodRequestsForDonor(params)
+      .then((response) => {
+        console.log(response.data)
+        setBloodRequests(response.data.data);
+        setTotalPage(response.data.total_page);
+      })
+      .catch((err) => console.log(err));
   };
 
   //First load and filter
   useEffect(() => {
-    BloodRequest.getOpenBloodRequestsForDonor(debounced).then((response) => {
-      setBloodRequests(response.data.data);
-    })
-    .catch((err) => console.log(err));        
+    if (debounced) {
+      BloodRequest.getOpenBloodRequestsForDonor({ keyword: debounced }).then((response) => {
+        setBloodRequests(response.data.data);
+      })
+      .catch((err) => console.log(err));  
+    } else {
+      getDonorBloodRequests();
+    }  
   }, [debounced])
 
   const createAppointment = (payload) => {
@@ -65,6 +73,7 @@ const Requests = () => {
         getDonorBloodRequests();
         setErrors(response.data.errors);
         setOpened(false);
+        dispatch(fetchTally());
       })
       .catch((err) => console.log(err));
   };
@@ -93,10 +102,10 @@ const Requests = () => {
   const rows = bloodRequests.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.code}</td>
-      <td>{element.attributes.organization_name}</td>
-      <td>{element.attributes.blood_type_name}</td>
-      <td>{element.attributes.request_type_name}</td>
-      <td>{element.attributes.case_name}</td>
+      <td>{element.attributes.organization.name}</td>
+      <td>{element.attributes.blood_type.name}</td>
+      <td>{element.attributes.request_type.name}</td>
+      <td>{element.attributes.case.name}</td>
       <td>
         {moment(element.attributes.date_time).format("MM/DD/YYYY hh:mm a")}
       </td>
@@ -163,7 +172,7 @@ const Requests = () => {
           value={searchValue} 
           onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
-      <Table columns={COLUMNS} rows={bloodRequests}>
+      <Table columns={COLUMNS} rows={bloodRequests} dispatchHandler={getDonorBloodRequests} maxPage={totalPage}>
         <tbody>{rows}</tbody>
       </Table>      
     </Wrapper>

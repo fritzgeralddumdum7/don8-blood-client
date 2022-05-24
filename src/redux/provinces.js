@@ -17,7 +17,7 @@ export const provincesSlice = createSlice({
   },
   extraReducers: {
     [fetchProvinces.fulfilled]: (state, action) => {
-      state.provinces = formatAsSelectData(action.payload, 'province_name');
+      state.provinces = formatAsSelectData(action.payload, 'name');
     }
   }
 })

@@ -25,6 +25,7 @@ const Appointments = () => {
   const [orgAppointments, setOrgAppointments] = useState([]);
   //selected appointment
   const [appointmentId, setAppointmentId] = useState(0);
+  const [maxPage, setMaxPage] = useState(0);
 
   const COLUMNS = [
     'Donor',
@@ -37,17 +38,20 @@ const Appointments = () => {
     'Actions'
   ];
 
-  const getOrgAppointments = () => {
-    Appointment.getOrgAllAppointments().then((response) => {
-      setOrgAppointments(response.data.data);    
+  const getOrgAppointments = (params) => {
+    Appointment.getOrgAllAppointments(params).then((response) => {
+      setOrgAppointments(response.data.data);
+      setMaxPage(response.data.total_page);
     }).catch(err => console.log(err));
   };
 
   //First load and filter
   useEffect(() => {
-    Appointment.getOrgAllAppointments(debounced).then((response) => {
-      setOrgAppointments(response.data.data);
-    }).catch((err) => console.log(err));    
+    if (debounced) {
+      getOrgAppointments({ keyword: debounced });
+    } else {
+      getOrgAppointments();
+    } 
   }, [debounced])
 
   const completeAppointment = () => {
@@ -132,9 +136,9 @@ const Appointments = () => {
           value={searchValue} 
           onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
-      <Table columns={COLUMNS} rows={orgAppointments}>
+      <Table columns={COLUMNS} rows={orgAppointments} maxPage={maxPage} dispatchHandler={getOrgAppointments}>
         <tbody>{rows}</tbody>
-      </Table>      
+      </Table>
     </Wrapper>
   );
 }

@@ -11,17 +11,20 @@ export const DONOR_NAV_ITEMS = [
   {
     text: 'Dashboard',
     Component: LayoutDashboard,
-    href: ['/']
+    href: ['/'],
+    withBadge: false
   },
   {
     text: 'Requests',
     Component: HeartHandshake,
-    href: ['/requests']
+    href: ['/requests'],
+    withBadge: false
   },
   {
     text: 'Appointments',
     Component: Notes,
-    href: ['/appointments']
+    href: ['/appointments'],
+    withBadge: true
   },  
 ]
 
@@ -29,17 +32,21 @@ export const ORGS_NAV_ITEMS = [
   {
     text: 'Dashboard',
     Component: LayoutDashboard,
-    href: ['/']
+    href: ['/'],
+    withBadge: false
   },
   {
     text: 'Requests',
     Component: HeartHandshake,
-    href: ['/requests']
+    href: ['/requests'],
+    withBadge: false
   },
   {
     text: 'Appointments',
     Component: Notes,
-    href: ['/appointments']
+    href: ['/appointments'],
+    withBadge: true,
+    name: 'appointments'
   },
   {
     text: 'Patients',

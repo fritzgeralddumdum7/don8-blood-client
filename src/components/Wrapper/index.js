@@ -21,14 +21,14 @@ import {
   Loader,
   Button,
   Stack,
-  PasswordInput
+  PasswordInput,
+  Badge
 } from '@mantine/core';
 import { DONOR_NAV_ITEMS, ORGS_NAV_ITEMS, ADMIN_NAV_ITEMS } from '@/constant';
 import { Pencil, Power, Mail, Lock } from 'tabler-icons-react';
 import { useAuth } from '@/contexts/AuthProvider';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from '@mantine/form';
-import { DatePicker } from '@mantine/dates';
 import { useSelector, useDispatch } from 'react-redux';
 import { User } from '@/services';
 import API from '@/api/base';
@@ -48,7 +48,7 @@ const Wrapper = ({ children }) => {
   const { provinces } = useSelector(state => state.provinces);
   const [provinceList, setProvinceList] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
-  const { authUser } = useSelector(state => state.users);
+  const { authUser, tally } = useSelector(state => state.users);
   const [isShowAlert, setIsShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState(null);
   const [isPasswordOpened, setIsPasswordOpened] = useState(false);
@@ -74,9 +74,6 @@ const Wrapper = ({ children }) => {
     validate: {
       firstname: (value) => value ? null : 'First name is required',
       lastname: (value) => value ? null : 'Last name is required',
-      // birthday: (value) => value ? null : 'Birthday is required',
-      // province: (value) => value ? null : 'Province is required',
-      // city_municipality_id: (value) => value ? null : 'City / Municipality is required',
       address: (value) => (!value || value) && null
     },
   });
@@ -111,6 +108,18 @@ const Wrapper = ({ children }) => {
     },
   });
 
+  const renderBadge = (withBadge) => {
+    if ([1, 2].includes(authUser?.role) && withBadge && tally?.appointments > 0) {
+      return (
+        <div style={{ width: 'auto' }}>
+          <Badge variant="filled" color='red' fullWidth sx={{ pointerEvents: 'none' }}>
+            {tally.appointments}
+          </Badge>
+        </div>
+      );
+    }
+  }
+
   const renderNavItems = () => {
     let items = [];
 
@@ -122,7 +131,7 @@ const Wrapper = ({ children }) => {
       items = ADMIN_NAV_ITEMS;
     }
 
-    return items.map(({ Component, text, href }, i) => {
+    return items.map(({ Component, text, href, withBadge, name }, i) => {
       return (
         <Anchor key={i} p={13} underline={false} href={href} styles={() => ({
           root: {
@@ -134,17 +143,23 @@ const Wrapper = ({ children }) => {
         })}>
           <Navbar.Section>
             <Group
+              position='apart'
               spacing={!href.includes(location.pathname) && 24}
               ml={!href.includes(location.pathname) && 7}
             >
-              {
-                href.includes(location.pathname) ?
-                  <ThemeIcon size='lg'>
+              <Group>
+                {
+                  href.includes(location.pathname) ?
+                    <ThemeIcon size='lg'>
+                      <Component size={18} />
+                    </ThemeIcon> :
                     <Component size={18} />
-                  </ThemeIcon> :
-                  <Component size={18} />
+                }
+                <Text>{text}</Text>
+              </Group>
+              {
+                renderBadge(withBadge)
               }
-              <Text>{text}</Text>
             </Group>
           </Navbar.Section>
         </Anchor>
@@ -414,34 +429,6 @@ const Wrapper = ({ children }) => {
               />
             </Grid.Col>
           </Grid>
-          {/* <Grid grow>
-            <Grid.Col span={4}>
-              <Select
-                label="Province"
-                placeholder="Select a province"
-                data={provinceList}
-                onChange={(event) => {
-                  form.setValues(values => ({ ...values, province: event }));
-                  form.setFieldValue('city', null);
-                }}
-                value={form.values.province}
-                searchable
-              />
-            </Grid.Col>
-            <Grid.Col span={4}>
-              <Select
-                label="City / Municipality"
-                placeholder="Select a province"
-                data={provinceList}
-                onChange={(event) => {
-                  form.setValues(values => ({ ...values, province: event }));
-                  form.setFieldValue('city', null);
-                }}
-                value={form.values.province}
-                searchable
-              />
-            </Grid.Col>
-          </Grid> */}
           <Grid grow>
             <Grid.Col span={12}>
               <TextInput
@@ -452,24 +439,6 @@ const Wrapper = ({ children }) => {
               />
             </Grid.Col>
           </Grid>
-          {/* <Grid grow>
-            <Grid.Col span={6}>
-              <TextInput
-                label="Phone Number"
-                readOnly={isUpdate}
-                rightSection={!isUpdate && <Pencil color='gray' size="15" />}
-                {...form.getInputProps('address')}
-              />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <DatePicker
-                label="Birthday"
-                disabled={isUpdate}
-                placeholder='Select date'
-                {...form.getInputProps('birthday')}
-              />
-            </Grid.Col>
-          </Grid> */}
           <Group position='right'>
             <Button mt='xl' onClick={updatePasswordHandler} color='red'>Update Password</Button>
             {

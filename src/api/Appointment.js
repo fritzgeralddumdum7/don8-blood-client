@@ -1,11 +1,12 @@
 import API from './base';
 
 const Appointment = {
-  getOrgAllAppointments: async (param) => {
-    let params = {transaction_type: 'allappointments_of_org'};
-    if (param){
-      params = {...params, keyword: param}
-    }
+  getOrgAllAppointments: async (qParams) => {
+    let params = {
+      transaction_type: 'allappointments_of_org',
+      ...qParams
+    };
+    
     const options = {
       method: 'GET',
       url: '/appointments',
@@ -13,11 +14,12 @@ const Appointment = {
     }
     return await API.request(options);
   },
-  getDonorAllAppointments: async (param) => {
-    let params = {transaction_type: 'allappointments_of_donor'}
-    if (param){
-      params = {...params, keyword: param}
+  getDonorAllAppointments: async (qParams) => {
+    let params = {
+      transaction_type: 'allappointments_of_donor',
+      ...qParams
     }
+    
     const options = {
       method: 'GET',
       url: '/appointments',

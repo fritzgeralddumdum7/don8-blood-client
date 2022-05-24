@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useDispatch } from 'react-redux';
-import { fetchUserProfile, resetAuthUser } from '@/redux/users';
+import { fetchUserProfile, resetAuthUser, fetchTally } from '@/redux/users';
 
 const AuthContext = createContext(null);
 
@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (authorization) => {
     dispatch(fetchUserProfile());
+    dispatch(fetchTally());
     setIsAuth(true);
     const token = authorization.split(' ')[1];
     Cookies.set('avion_access_token', token, { expires: 1 });
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (isAuth) {
       dispatch(fetchUserProfile());
+      dispatch(fetchTally());
     }
   }, [isAuth])
 

@@ -1,11 +1,12 @@
 import API from './base';
 
 const BloodRequest = {
-  getOrgAllBloodRequests: async (param) => {
-    let params = {transaction_type: 'requests_of_org'};
-    if (param){
-      params = {...params, keyword: param}
-    }
+  getOrgAllBloodRequests: async (qParams) => {
+    let params = {
+      transaction_type: 'requests_of_org',
+      ...qParams
+    };
+    
     const options = {
       method: 'GET',
       url: '/blood_requests',
@@ -13,11 +14,12 @@ const BloodRequest = {
     }
     return await API.request(options);
   },
-  getOpenBloodRequestsForDonor: async (param) => {
-    let params = {transaction_type: 'openrequests_for_donor',}
-    if (param){
-      params = {...params, keyword: param}
+  getOpenBloodRequestsForDonor: async (qParams) => {
+    let params = {
+      transaction_type: 'openrequests_for_donor' ,
+      ...qParams
     }
+
     const options = {
       method: 'GET',
       url: `/blood_requests/`,
