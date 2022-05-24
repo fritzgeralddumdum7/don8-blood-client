@@ -69,15 +69,11 @@ const Requests = () => {
     setBloodRequestId(id);
     BloodRequest.getSpecificBloodRequest(id).then((response) => {
       const bloodRequest = response.data.data[0];
-      const newTime = new Date('01/01/2022 ' + moment(bloodRequest.attributes.date_time).format('HH:mm'));
-      console.log(newTime);
-      console.log(APPOINTMENT_SCHEDS);
-      form.setValues({date_time: new Date(bloodRequest.attributes.date_time),
-                      time: newTime,
-                      user_id: bloodRequest.attributes.user_id.toString(),
-                      request_type_id: bloodRequest.attributes.request_type_id.toString(),
-                      case_id: bloodRequest.attributes.case_id.toString()});   
-                         
+      form.setFieldValue('date_time', new Date(bloodRequest.attributes.date_time));                                   
+      form.setFieldValue('time', moment(bloodRequest.attributes.date_time).format('h:mm a'));    
+      form.setFieldValue('user_id', bloodRequest.attributes.user_id.toString());
+      form.setFieldValue('request_type_id', bloodRequest.attributes.request_type_id.toString());
+      form.setFieldValue('case_id', bloodRequest.attributes.case_id.toString());
       setErrors(response.data.errors);            
     }).catch(err => console.log(err));    
   }    
@@ -262,7 +258,8 @@ const Requests = () => {
               placeholder="Select here"
               {...form.getInputProps('time')}
               data = {APPOINTMENT_SCHEDS}
-              required />
+              required
+              defaultValue={form.values.time} />
             <Select
                 label="Patient Name"
                 placeholder="Select here"
@@ -274,7 +271,8 @@ const Requests = () => {
                   return item;
                 })}
                 searchable
-                maxDropdownHeight={280}                
+                maxDropdownHeight={280}  
+                defaultValue={form.values.user_id}              
               />
             <Select
               label="Request Type"
@@ -287,6 +285,7 @@ const Requests = () => {
                 return item;
               })}
               searchable
+              defaultValue={form.values.request_type_id}
             />
             <Select
               label="Case Type"
@@ -299,6 +298,7 @@ const Requests = () => {
                 return item;
               })}
               searchable
+              defaultValue={form.values.case_id}
             />
             <Button type='submit'>Save</Button>
           </Stack>

@@ -8,5 +8,5 @@ export const formatAsSelectData = (items, key) => {
 }
 
 export const formatDateTime = (date, time) => {
-  return moment(date).format('YYYY-MM-DD') + ' ' + moment.utc(time).format('HH:mm')
+  return `${moment(`${date}`).format('YYYY-MM-DD')} ${time}`
 }
