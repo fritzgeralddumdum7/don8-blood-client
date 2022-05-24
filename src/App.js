@@ -20,6 +20,7 @@ import OrgsAppointments from '@/pages/orgs/Appointments';
 import OrgsPatients from '@/pages/orgs/Patients';
 import OrgsDonors from '@/pages/orgs/Donors';
 import OrgsDashboard from '@/pages/orgs/Dashboard';
+import OrgsRequestAppointments from '@/pages/orgs/RequestAppointments';
 
 import Dashboard from '@/pages/Dashboard';
 import Home from '@/pages/Home';
@@ -192,6 +193,15 @@ const App = () => {
                       element={(
                         <RequireAuth>
                           <OrgsDonors />
+                        </RequireAuth>
+                      )}
+                    />
+                     <Route
+                      path="/requestappointments/:blood_request_id"
+                      exact
+                      element={(
+                        <RequireAuth>
+                          <OrgsRequestAppointments />
                         </RequireAuth>
                       )}
                     />

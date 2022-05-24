@@ -27,6 +27,15 @@ const Appointment = {
     }
     return await API.request(options);
   },
+  getOrgBloodRequestAppointments: async (id) => {
+    let params = {transaction_type: 'allappointments_of_bloodrequest', blood_request_id: id};
+    const options = {
+      method: 'GET',
+      url: '/appointments',
+      params
+    }
+    return await API.request(options);
+  },
   getSpecificAppointment: async (id) => {
     const options = {
       method: 'GET',
