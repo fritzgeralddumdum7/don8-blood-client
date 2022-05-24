@@ -199,7 +199,7 @@ const Requests = () => {
       <td>{element.attributes.request_type.name}</td>
       <td>{element.attributes.case.name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
-      <td>{element.attributes.no_of_appointments}</td>
+      <td>{element.attributes.total_appointments_made_per_request}</td>
       <td>
         <Badge color={element.attributes.is_closed? 'gray' : 'red'} variant="filled">
           {element.attributes.is_closed? 'Closed' : 'Pending'}
