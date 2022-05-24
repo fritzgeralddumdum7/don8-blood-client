@@ -26,8 +26,6 @@ const Appointments = () => {
   //selected appointment
   const [appointmentId, setAppointmentId] = useState(0);
 
-  const {authUser} = useSelector(state => state.users )
-
   const COLUMNS = [
     'Donor',
     'Blood Type',
@@ -127,10 +125,12 @@ const Appointments = () => {
       />
       <Group position="left" py='md'>
         <Text>Search:</Text>
-        <TextInput
-            placeholder="Donor name"
-            value={searchValue} 
-            onChange={(event) => setSearchValue(event.target.value)} />        
+        <TextInput styles={() => ({
+          root: { width: '30%' }
+          })}
+          placeholder="Req. Code or Donor name"
+          value={searchValue} 
+          onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
       <Table columns={COLUMNS} rows={orgAppointments}>
         <tbody>{rows}</tbody>
