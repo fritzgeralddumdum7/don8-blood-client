@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Wrapper from '@/components/Wrapper';
 import Table from '@/components/Table';
 import AlertDialog from '@/components/AlertDialog';
 import Alert from '@/components/AlertDialog';
-import { Badge, Button, Stack, Select, Group, Drawer, Text, TextInput } from '@mantine/core';
+import { Badge, Button, Stack, Select, Group, Drawer, Text, TextInput, Anchor } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
-import { Clock, Pencil, Trash } from 'tabler-icons-react';
+import { Clock, Pencil, Receipt, Trash } from 'tabler-icons-react';
 import { Case, BloodRequest, RequestType, User } from '@/services';
 import {formatDateTime} from '@/helpers';
 import { APPOINTMENT_SCHEDS } from '@/constant';
@@ -233,6 +234,11 @@ const Requests = () => {
         }}>
           {element.attributes.is_closed? 'Re-open' : 'Close'}
         </Button>
+        <Anchor component={Link} to={'/requestappointments/' + element.id}>
+          <Button ml={8} color='blue' leftIcon={<Receipt />}>
+            View
+          </Button>
+        </Anchor>        
       </td>
     </tr>
   ));
