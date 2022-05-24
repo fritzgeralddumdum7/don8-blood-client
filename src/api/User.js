@@ -55,11 +55,12 @@ const Organization = {
 		}
 		return await API.request(options);
 	},
-	getByRole: async (role) => {
+	getByRole: async (role, qParams) => {
+		const params = { role, ...qParams }
 		const options = {
 			method: 'GET',
 			url: '/users',
-			params: {role}
+			params
 		}
 		return await API.request(options);
 	},
@@ -67,6 +68,13 @@ const Organization = {
 		const options = {
 			method: 'GET',
 			url: '/users/dashboard'
+		}
+		return await API.request(options);
+	},
+	tally: async () => {
+		const options = {
+			method: 'GET',
+			url: '/users/tally'
 		}
 		return await API.request(options);
 	}

@@ -27,6 +27,7 @@ const Appointments = () => {
   //selected appointment
   const [appointmentId, setAppointmentId] = useState(0);
   const { authUser } = useSelector(state => state.users);
+  const [maxPage, setMaxPage] = useState(0);
 
   const COLUMNS = [
     'Organization',
@@ -52,10 +53,11 @@ const Appointments = () => {
   });
 
   //table items
-  const getDonorAppointments = () => {
+  const getDonorAppointments = (params = {}) => {
     if (authUser)
-      Appointment.getDonorAllAppointments().then((response) => { //donor's id
-        setDonorAppointments(response.data.data);    
+      Appointment.getDonorAllAppointments(params).then((response) => { //donor's id
+        setDonorAppointments(response.data.data);   
+        setMaxPage(response.data.total_page);
       }).catch(err => console.log(err));
   };
 
@@ -91,9 +93,11 @@ const Appointments = () => {
 
   //First load and filter
   useEffect(() => {
-    Appointment.getDonorAllAppointments(debounced).then((response) => {
-      setDonorAppointments(response.data.data); 
-    }).catch((err) => console.log(err));    
+    if (debounced) {
+      getDonorAppointments({ keyword: debounced });
+    } else {
+      getDonorAppointments();
+    } 
   }, [debounced])
 
   useEffect(() => {   
@@ -103,12 +107,12 @@ const Appointments = () => {
 
   const rows = donorAppointments.map((element) => (
     <tr key={element.id}>
-      <td>{element.attributes.organization_name}</td>
-      <td>{element.attributes.blood_type_name}</td>
-      <td>{element.attributes.request_type_name}</td>
-      <td>{element.attributes.case_name}</td>
+      <td>{element.attributes.organization.data.attributes.name}</td>
+      <td>{element.attributes.blood_type.data.attributes.name}</td>
+      <td>{element.attributes.request_type.data.attributes.name}</td>
+      <td>{element.attributes.case.data.attributes.name}</td>
       <td>{moment(element.attributes.date_time).format('MM/DD/YYYY hh:mm a')}</td>
-      <td>{element.attributes.blood_request_code}</td>
+      <td>{element.attributes.blood_request.code}</td>
       <td>
         <Badge color={element.attributes.is_completed? 'green' : 'red'} variant="filled">{element.attributes.is_completed? 'Completed' : 'Pending'}</Badge>
       </td>
@@ -180,7 +184,7 @@ const Appointments = () => {
           value={searchValue} 
           onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
-      <Table columns={COLUMNS} rows={donorAppointments}>
+      <Table columns={COLUMNS} rows={donorAppointments} maxPage={maxPage} dispatchHandler={getDonorAppointments}>
         <tbody>{rows}</tbody>
       </Table>
     </Wrapper>

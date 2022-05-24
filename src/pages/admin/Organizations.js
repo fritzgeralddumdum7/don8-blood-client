@@ -25,7 +25,7 @@ const Organizations = () => {
   const [cities, setCities] = useState([]);
   //for dropdowns items
   const [organizationTypes, setOrganizationTypes] = useState([]); 
-  const [cityMunicipalities, setCityMunicipalities] = useState([]); 
+  const [provinceList, setProvinceList] = useState([]); 
   //for table items
   const [organizations, setOrganizations] = useState([]);
   

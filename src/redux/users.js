@@ -27,11 +27,20 @@ export const fetchUserProfile = createAsyncThunk('users/fetchUserProfile',
   }
 )
 
+export const fetchTally = createAsyncThunk('users/fetchTally',
+  async () => {
+    const response = await User.tally();
+
+    return response.data.data;
+  }
+)
+
 export const usersSlice = createSlice({
   name: 'users',
   initialState: {
     authUser: null,
-    isFetching: false
+    isFetching: false,
+    tally: {}
   },
   reducers: {
     resetAuthUser: state => {
@@ -44,6 +53,9 @@ export const usersSlice = createSlice({
   extraReducers: {
     [fetchUserProfile.fulfilled]: (state, action) => {
       state.authUser = action.payload;
+    },
+    [fetchTally.fulfilled]: (state, action) => {
+      state.tally = action.payload;
     }
   }
 })
