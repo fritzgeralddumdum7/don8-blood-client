@@ -50,11 +50,6 @@ export const ORGS_NAV_ITEMS = [
 
 export const ADMIN_NAV_ITEMS = [
   {
-    text: 'Dashboard',
-    Component: LayoutDashboard,
-    href: ['/']
-  },
-  {
     text: 'Organizations',
     Component: BuildingCommunity,
     href: ['/organizations']

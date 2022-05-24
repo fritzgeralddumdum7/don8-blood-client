@@ -4,34 +4,37 @@ import {
   Table as MantineTable,
   Text,
   Pagination,
-  Group
+  Group,
+  Stack
 } from '@mantine/core';
 
 const Table = ({ children, columns, rows = [] }) => {
   return (
-    <Card shadow="sm" styles={() => ({
-      root: { overflow: 'auto !important' }
-    })}>
-      <MantineTable striped highlightOnHover>
-        <thead>
-          <tr>
-            {columns.map(col => <th>{col}</th>)}
-          </tr>
-        </thead>
-        {
-          rows.length === 0 ? (
+    <Stack>
+      <Card shadow="sm" styles={() => ({
+        root: { overflow: 'auto !important' }
+      })}>
+        <MantineTable striped highlightOnHover>
+          <thead>
             <tr>
-              <td colSpan={columns.length}>
-                <Text align='center' pt={15}>No data available</Text>
-              </td>
+              {columns.map(col => <th>{col}</th>)}
             </tr>
-          ) : children
-        }
-      </MantineTable>
-      <Group position='right' mt='md'>
+          </thead>
+          {
+            rows.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length}>
+                  <Text align='center' pt={15}>No data available</Text>
+                </td>
+              </tr>
+            ) : children
+          }
+        </MantineTable>
+      </Card>
+      <Group position='right'>
         <Pagination total={1} />
       </Group>
-    </Card>
+    </Stack>
   )
 }
 
