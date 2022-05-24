@@ -412,20 +412,12 @@ const Wrapper = ({ children }) => {
             </Grid.Col>
           </Grid>
           <Grid grow>
-            <Grid.Col span={8}>
+            <Grid.Col span={12}>
               <TextInput
                 label="Email Address"
                 icon={<Mail size={18} />}
                 disabled={true}
                 {...form.getInputProps('email')}
-              />
-            </Grid.Col>
-            <Grid.Col span={4}>
-              <TextInput
-                label="Phone Number"
-                readOnly={!isUpdate}
-                rightSection={isUpdate && <Pencil color='gray' size="15" />}
-                {...form.getInputProps('mobile_no')}
               />
             </Grid.Col>
           </Grid>
