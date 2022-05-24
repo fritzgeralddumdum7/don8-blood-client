@@ -319,10 +319,12 @@ const Requests = () => {
       />
       <Group position="left" py='md'>
         <Text>Search:</Text>
-        <TextInput
-            placeholder="Request code or Patient name"
-            value={searchValue} 
-            onChange={(event) => setSearchValue(event.target.value)} />        
+        <TextInput styles={() => ({
+          root: { width: '30%' }
+          })}          
+          placeholder="Req. code or Patient name"
+          value={searchValue} 
+          onChange={(event) => setSearchValue(event.target.value)} />        
       </Group>
       <Table columns={COLUMNS} rows={bloodRequests}>
         <tbody>{rows}</tbody>
