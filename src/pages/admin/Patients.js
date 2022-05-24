@@ -34,9 +34,9 @@ const Patients = () => {
   const rows = patients.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.name}</td>
-      <td>{element.attributes.blood_type_name}</td>
-      <td>{element.attributes.city_municipality_name}</td>
-      <td>{element.attributes.province_name}</td>
+      <td>{element.attributes.blood_type.name}</td>
+      <td>{element.attributes.city_municipality.name}</td>
+      <td>{element.attributes.province.data.attributes.name}</td>
       <td></td>
     </tr>
   ));
@@ -67,7 +67,7 @@ const Patients = () => {
         text={alertMsg}
         type={transactionType}
       />
-      <Table columns={['Patient', 'Blood Type', 'City/Municipality', 'Province', 'Age']} rows={patients}>
+      <Table columns={['Patient', 'Blood Type', 'City/Municipality', 'Province']} rows={patients}>
         <tbody>{rows}</tbody>
       </Table> 
     </Wrapper>

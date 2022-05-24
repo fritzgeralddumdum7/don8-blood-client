@@ -61,9 +61,9 @@ const Organizations = () => {
   const rows = organizations.map((element) => (
     <tr key={element.id}>
       <td>{element.attributes.name}</td>
-      <td>{element.attributes.city_municipality_name}</td>
-      <td>{element.attributes.province_name}</td>
-      <td>{element.attributes.organization_type_name}</td>      
+      <td>{element.attributes.city_municipality.name}</td>
+      <td>{element.attributes.province.data.attributes.name}</td>
+      <td>{element.attributes.organization_type.name}</td>      
       <td>
         <Button leftIcon={<Pencil />}
           onClick={() => {
